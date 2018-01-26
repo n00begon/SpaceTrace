@@ -18,6 +18,7 @@ var MyGame;
             _this.state.add('Preloader', MyGame.PreloaderState);
             _this.state.add('UI', MyGame.UIState);
             _this.state.add('Game', MyGame.GameState);
+            _this.state.add('Trace', MyGame.TraceState);
             _this.state.start('Boot');
             return _this;
         }
