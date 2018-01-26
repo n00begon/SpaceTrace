@@ -16,6 +16,7 @@ var MyGame;
             var _this = _super.call(this, 800, 600, Phaser.AUTO, 'content', null) || this;
             _this.state.add('Boot', MyGame.BootState);
             _this.state.add('Preloader', MyGame.PreloaderState);
+            _this.state.add('UI', MyGame.UIState);
             _this.state.add('Game', MyGame.GameState);
             _this.state.start('Boot');
             return _this;
@@ -73,12 +74,31 @@ var MyGame;
         }
         PreloaderState.prototype.preload = function () {
             this.game.load.image('logo', 'assets/logo.png');
+            this.game.load.image('button', 'assets/button.png');
+            this.game.load.image('buttonHover', 'assets/buttonHover.png');
+            this.game.load.image('buttonDown', 'assets/buttonDown.png');
         };
         PreloaderState.prototype.create = function () {
-            this.game.state.start('Game');
+            this.game.state.start('UI');
         };
         return PreloaderState;
     }(Phaser.State));
     MyGame.PreloaderState = PreloaderState;
+})(MyGame || (MyGame = {}));
+var MyGame;
+(function (MyGame) {
+    var UIState = /** @class */ (function (_super) {
+        __extends(UIState, _super);
+        function UIState() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        UIState.prototype.preload = function () { };
+        UIState.prototype.create = function () {
+            var button = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'button');
+            button.anchor.setTo(0.5, 0.5);
+        };
+        return UIState;
+    }(Phaser.State));
+    MyGame.UIState = UIState;
 })(MyGame || (MyGame = {}));
 //# sourceMappingURL=game.js.map
