@@ -10,6 +10,11 @@ module MyGame {
 		bitmapData: Phaser.BitmapData;
 		dotIndex: number = 0;
 
+		leftButton: Phaser.Button;
+		rightButton: Phaser.Button;
+		upButton: Phaser.Button;
+		downButton: Phaser.Button;
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -18,6 +23,25 @@ module MyGame {
 			this.traceDot = this.game.add.sprite(0, this.game.world.centerY, 'traceDot');
 			this.traceDot.anchor.setTo(0.5, 0.5);
 			this.game.physics.enable(this.traceDot, Phaser.Physics.ARCADE);
+
+			this.createEmitter();
+			this.createButtons();
+		}
+
+		update() {
+			this.traceDot.body.velocity.x = 200;
+			this.emitter.x = this.traceDot.x;
+			this.emitter.y = this.traceDot.y;
+			this.traceDot.body.velocity.x = 500;
+			this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
+
+
+			if (this.traceDot.x > this.game.world.width) {
+				this.traceDot.x = 0;
+			}
+		}
+
+		createEmitter() {
 			this.emitter = this.game.add.emitter(this.game.world.centerX, this.game.world.centerY, 500);
 			this.emitter.setAlpha(1, 0, 2500);
 
@@ -35,17 +59,31 @@ module MyGame {
 			this.emitter.gravity = new Phaser.Point(0,0);
 		}
 
-		update() {
-			this.traceDot.body.velocity.x = 200;
-			this.emitter.x = this.traceDot.x;
-			this.emitter.y = this.traceDot.y;
-			this.traceDot.body.velocity.x = 500;
-			this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
+		createButtons() {
+			const offset = 50;
+			const centerButtonX = this.game.world.left + offset + 20;
+			const centerButtonY = this.game.world.height - offset - 50 - 20;
+			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 0, 2);
+			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 0, 2);
+			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 0, 2);
+			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 0, 2);
 
+		}
 
-			if (this.traceDot.x > this.game.world.width) {
-				this.traceDot.x = 0;
-			}
+		leftClick() {
+			console.log("Left Click");
+		}
+
+		rightClick() {
+			console.log("Right Click");
+		}
+
+		upClick() {
+			console.log("Up Click");
+		}
+
+		downClick() {
+			console.log("Down Click");
 		}
 
 	}
