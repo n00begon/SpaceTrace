@@ -9,7 +9,9 @@ module MyGame {
 
 			this.state.add('Boot', BootState);
 			this.state.add('Preloader', PreloaderState);
+			this.state.add('UI', UIState);
 			this.state.add('Game', GameState);
+			this.state.add('Trace', TraceState);
 
 			this.state.start('Boot');
 		}
