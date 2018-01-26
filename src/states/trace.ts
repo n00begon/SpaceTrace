@@ -16,6 +16,8 @@ module MyGame {
 		upButton: Phaser.Button;
 		downButton: Phaser.Button;
 
+		gameState: SpaceTraceState;
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -27,6 +29,7 @@ module MyGame {
 
 			this.createEmitter();
 			this.createButtons();
+			this.gameState = new SpaceTraceState();
 		}
 
 		update() {
@@ -80,19 +83,23 @@ module MyGame {
 		}
 
 		leftClick() {
-			console.log("Left Click");
+			this.gameState.move('left');
+			console.log("Left Click", this.gameState);
 		}
 
 		rightClick() {
-			console.log("Right Click");
+			this.gameState.move('right');			
+			console.log("Right Click", this.gameState);
 		}
 
 		upClick() {
-			console.log("Up Click");
+			this.gameState.move('up');						
+			console.log("Up Click", this.gameState);
 		}
 
 		downClick() {
-			console.log("Down Click");
+			this.gameState.move('down');						
+			console.log("Down Click", this.gameState);
 		}
 
 	}

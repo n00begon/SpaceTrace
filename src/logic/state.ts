@@ -1,3 +1,5 @@
+module MyGame {
+
 function pickOne(array: any[]) {
     return array[Math.floor(Math.random() * array.length)];
 }
@@ -87,7 +89,7 @@ class Player {
     }
 }
 
-class State {
+export class SpaceTraceState {
     player: Player;
     space: SpaceNode[][] = [];
 
@@ -142,9 +144,11 @@ class State {
 
 }
 
-const state = new State();
+const state = new SpaceTraceState();
 console.log(state);
 // const test = new Player();
 // console.log(test.position)
 // test.move('left');
 // console.log(test.position)
+
+}
