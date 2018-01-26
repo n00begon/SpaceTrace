@@ -52,6 +52,23 @@ class Player {
         };
     }
 
+    move(movement: Movement) {
+        switch (movement) {
+            case 'left':
+                this.position.x--;
+                break;
+            case 'right':
+                this.position.x++;
+                break;
+            case 'up':
+                this.position.y--;
+                break;
+            case 'down':
+                this.position.y++;
+                break;
+        }
+    }
+
     hasDisease(disease: Disease) {
         return this.diseases.reduce((memo, cur) => {
             if (cur === disease)
@@ -101,17 +118,7 @@ class State {
     // the Movement type is not correct (it is literal in respect to the grid we are moving in)
     // not sure what to call this
     move(movement: Movement) {
-        const { position } = this.player;
-        switch (movement) {
-            case 'left':
-                position.x--;
-            case 'right':
-                position.x++;
-            case 'up':
-                position.y--;
-            case 'down':
-                position.y++;
-        }
+        this.player.move(movement);
 
         if (this.player.state === 'defibrillate') {
             this.player.health--; // the player needed to defibrillate, hurt them!
@@ -137,3 +144,7 @@ class State {
 
 const state = new State();
 console.log(state);
+// const test = new Player();
+// console.log(test.position)
+// test.move('left');
+// console.log(test.position)
