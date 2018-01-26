@@ -9,7 +9,7 @@
     "inst": "npm install"
   },
   "author": "Tim Neumegen <tneumegen@gmail.com>",
-  "contributors":[
+  "contributors": [
     "Tim Bennett <bennett.td@gmail.com",
     "Aaron Jackson <azzamatronic@gmail.com"
   ],
@@ -17,5 +17,4 @@
   "dependencies": {
     "node-static": "^0.7.9"
   }
-
 }

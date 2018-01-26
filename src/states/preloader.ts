@@ -7,7 +7,7 @@ module MyGame {
 		}
 
 		create() {
-			this.game.state.start('Game');
+			//this.game.state.start('Trace');
 		}
 
 	}

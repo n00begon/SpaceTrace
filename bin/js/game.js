@@ -17,6 +17,7 @@ var MyGame;
             _this.state.add('Boot', MyGame.BootState);
             _this.state.add('Preloader', MyGame.PreloaderState);
             _this.state.add('Game', MyGame.GameState);
+            _this.state.add('Trace', MyGame.TraceState);
             _this.state.start('Boot');
             return _this;
         }
@@ -75,10 +76,26 @@ var MyGame;
             this.game.load.image('logo', 'assets/logo.png');
         };
         PreloaderState.prototype.create = function () {
-            this.game.state.start('Game');
+            this.game.state.start('Trace');
         };
         return PreloaderState;
     }(Phaser.State));
     MyGame.PreloaderState = PreloaderState;
+})(MyGame || (MyGame = {}));
+var MyGame;
+(function (MyGame) {
+    var TraceState = /** @class */ (function (_super) {
+        __extends(TraceState, _super);
+        function TraceState() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        TraceState.prototype.preload = function () { };
+        TraceState.prototype.create = function () {
+            var logo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY);
+            logo.anchor.setTo(0.5, 0.5);
+        };
+        return TraceState;
+    }(Phaser.State));
+    MyGame.TraceState = TraceState;
 })(MyGame || (MyGame = {}));
 //# sourceMappingURL=game.js.map
