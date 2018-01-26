@@ -21,6 +21,8 @@ module MyGame {
 
 		gameState: SpaceTraceState;
 
+		gameGrid: Phaser.Sprite[][];
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -33,6 +35,7 @@ module MyGame {
 			this.createEmitter();
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
+			this.createGameGrid();
 		}
 
 		update() {
@@ -146,6 +149,28 @@ module MyGame {
 				this.gameState.move(this.transmission);
 				console.log(this.gameState);
 				this.click(Transmission.None);
+			}
+		}
+
+		createGameGrid() {
+			const offset = 20;
+			this.gameGrid = [];
+			for(let x = 0; x < this.gameState.space.length; ++x) {
+				this.gameGrid.push([]);
+				for (let y = 0; y < this.gameState.space[0].length; ++y) {
+					this.gameGrid[x][y] = this.game.add.sprite(x * offset, y * offset, 'grid');
+				}
+			}
+		}
+
+		drawGameState() {
+			const offset = 20;
+			const gridX = this.game.world.width - 40;
+			const gridY = this.game.world.top - 40;
+			for(let x = 0; x < this.gameState.space.length; ++x) {
+				for (let y = 0; y < this.gameState.space[0].length; ++y) {
+
+				}
 			}
 		}
 	}
