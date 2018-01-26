@@ -3,22 +3,24 @@ const HEALTHY_BEATS_PER_SCREEN = 2;
 const HEALTHY_BPS = 1.17; // 70 BPM
 const HEALTHY_MS_PER_SCREEN = HEALTHY_BEATS_PER_SCREEN * HEALTHY_BPS * 1000;
 const HEALTHY_MULTIPLIER = 1;
-const AMPLITUDE_INCREASE = 10;
+const AMPLITUDE_INCREASE = 250;
 const RATE_INCREASE = 0.5;
 
-class Signal {
+module MyGame {
+
+export class Signal {
 
     amplitudeMultiplier: number;
     rateMultiplier: number;
     trace: number[];
     drawWidth: number;
-    pointIndex: number;
+    tracePointIndex: number;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 1;
         this.rateMultiplier = 1;
         this.trace = trace;
-        this.pointIndex = 0;
+        this.tracePointIndex = 0;
     }
 
     getVelociy() {
@@ -54,15 +56,21 @@ class Signal {
     }
 
     getMillisecondsPerPoint() {
-        const basePerPoint = HEALTHY_BEATS_PER_SCREEN / this.trace.length; //13.7
-        
+        return (HEALTHY_BEATS_PER_SCREEN / this.trace.length) * this.rateMultiplier; //13.7 at healthy
+
     }
 
     getNextYPoints(elapsedTime: number): number[] {
+        const rateChanger = this.getMillisecondsPerPoint();
+        
+        let resultPoints = [];
 
+        while (elapsedTime > rateChanger) {
+            resultPoints.push(this.trace[this.tracePointIndex % this.trace.length] * this.amplitudeMultiplier);
+        }
 
-
-        return [];
+        return resultPoints;
     }
 
+}
 }
