@@ -9,6 +9,7 @@ module MyGame {
 		emitter: Phaser.Particles.Arcade.Emitter;
 		bitmapData: Phaser.BitmapData;
 		dotIndex: number = 0;
+		undrawnElapsedTime: number = 0;
 
 		leftButton: Phaser.Button;
 		rightButton: Phaser.Button;
@@ -33,11 +34,15 @@ module MyGame {
 			this.emitter.x = this.traceDot.x;
 			this.emitter.y = this.traceDot.y;
 
-			let elaspedSinceLast = this.game.time.elapsed;
+			this.undrawnElapsedTime += this.game.time.elapsed;
 
-			while (elaspedSinceLast > 13.7) {
+			while (this.undrawnElapsedTime > 13.7) {
 				this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
-				elaspedSinceLast -= 13.7;				
+				this.undrawnElapsedTime -= 13.7;
+				
+				if (this.undrawnElapsedTime < 0) {
+					this.undrawnElapsedTime = 0;
+				}
 			}
 
 			if (this.traceDot.x > this.game.world.width) {
