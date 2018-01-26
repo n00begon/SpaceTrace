@@ -46,8 +46,10 @@ class Player {
             if (i !== SPACE_CENTER)
                 legalPositions.push(i);
         }
-        this.position.x = pickOne(legalPositions);
-        this.position.y = pickOne(legalPositions);
+        this.position = {
+            x: pickOne(legalPositions),
+            y: pickOne(legalPositions)
+        };
     }
 
     hasDisease(disease: Disease) {
