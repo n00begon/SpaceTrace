@@ -5,9 +5,7 @@ module MyGame {
 		preload() {
 			this.game.load.image('logo', 'assets/logo.png');
 
-			this.game.load.image('button', 'assets/button.png');
-			this.game.load.image('buttonHover', 'assets/buttonHover.png');
-			this.game.load.image('buttonDown', 'assets/buttonDown.png');
+			this.game.load.spritesheet('button', 'assets/button.png', 100, 100);
 		}
 
 		create() {
