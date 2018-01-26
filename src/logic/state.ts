@@ -46,8 +46,27 @@ class Player {
             if (i !== SPACE_CENTER)
                 legalPositions.push(i);
         }
-        this.position.x = pickOne(legalPositions);
-        this.position.y = pickOne(legalPositions);
+        this.position = {
+            x: pickOne(legalPositions),
+            y: pickOne(legalPositions)
+        };
+    }
+
+    hasDisease(disease: Disease) {
+        return this.diseases.reduce((memo, cur) => {
+            if (cur === disease)
+                return true;
+        }, false);
+    }
+
+    hurt() {
+        this.health--;
+        if (this.health <= 0)
+            this.state = 'dead';
+    }
+
+    cure(drug: Disease) {
+        this.diseases = this.diseases.filter(disease => disease !== drug);        
     }
 }
 
@@ -72,15 +91,10 @@ class State {
 
     // this handles applying the 'special' drugs - ie. circle, triangle etc.
     applyDrug(drug: Disease) {
-        const playerHasDisease = this.player.diseases.reduce((memo, cur) => {
-            if (cur === drug)
-                return true;
-        }, false);
-
-        if (playerHasDisease) // remove disease
-            this.player.diseases = this.player.diseases.filter(disease => disease !== drug);
+        if (this.player.hasDisease(drug)) // remove disease
+            this.player.cure(drug);
         else
-            this.player.health--; // otherwise hurt the player
+            this.player.hurt(); // otherwise hurt the player
     }
 
     // this handles applying 'normal' drugs, like to raiser/lower frequency
