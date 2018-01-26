@@ -78,11 +78,51 @@ var MyGame;
             this.game.load.spritesheet('button', 'assets/button.png', 100, 100);
         };
         PreloaderState.prototype.create = function () {
-            this.game.state.start('UI');
+            this.game.state.start('Trace');
+            // this.game.state.start('UI');
         };
         return PreloaderState;
     }(Phaser.State));
     MyGame.PreloaderState = PreloaderState;
+})(MyGame || (MyGame = {}));
+var MyGame;
+(function (MyGame) {
+    var MAX_HEIGHT = 100;
+    var MIN_HEIGHT = 100;
+    var TraceState = /** @class */ (function (_super) {
+        __extends(TraceState, _super);
+        function TraceState() {
+            return _super !== null && _super.apply(this, arguments) || this;
+        }
+        TraceState.prototype.preload = function () {
+            this.game.load.image('traceDot', 'assets/dot.png');
+        };
+        TraceState.prototype.create = function () {
+            this.traceDot = this.game.add.sprite(0, this.game.world.centerY, 'traceDot');
+            this.traceDot.anchor.setTo(0.5, 0.5);
+            this.game.physics.enable(this.traceDot, Phaser.Physics.ARCADE);
+            this.emitter = this.game.add.emitter(this.game.world.centerX, this.game.world.centerY, 500);
+            this.emitter.setAlpha(1, 0, 2500);
+            this.bitmapData = this.game.add.bitmapData(5, 5);
+            this.bitmapData.fill(255, 0, 0, 1);
+            this.emitter.makeParticles(this.bitmapData);
+            this.emitter.start(false, 3000, 0);
+            this.emitter.on = true;
+            this.emitter.maxParticleSpeed = new Phaser.Point(0, 0);
+            this.emitter.minRotation = 0;
+            this.emitter.maxRotation = 0;
+            this.emitter.setXSpeed(0, 0);
+            this.emitter.setYSpeed(0, 0);
+            this.emitter.gravity = new Phaser.Point(0, 0);
+        };
+        TraceState.prototype.update = function () {
+            this.traceDot.body.velocity.x = 200;
+            this.emitter.x = this.traceDot.x;
+            this.emitter.y = this.traceDot.y;
+        };
+        return TraceState;
+    }(Phaser.State));
+    MyGame.TraceState = TraceState;
 })(MyGame || (MyGame = {}));
 var MyGame;
 (function (MyGame) {
