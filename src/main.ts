@@ -5,11 +5,11 @@ module MyGame {
 		
 		constructor()
 		{
-			super(800, 600, Phaser.AUTO, 'content', null);
+			super(1000
+				, 600, Phaser.AUTO, 'content', null);
 
 			this.state.add('Boot', BootState);
 			this.state.add('Preloader', PreloaderState);
-			this.state.add('UI', UIState);
 			this.state.add('Game', GameState);
 			this.state.add('Trace', TraceState);
 
