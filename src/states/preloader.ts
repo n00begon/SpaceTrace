@@ -11,8 +11,8 @@ module MyGame {
 		}
 
 		create() {
-			//this.game.state.start('Trace');
-			this.game.state.start('UI');
+			this.game.state.start('Trace');
+			// this.game.state.start('UI');
 		}
 
 	}
