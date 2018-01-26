@@ -10,6 +10,11 @@ module MyGame {
 		bitmapData: Phaser.BitmapData;
 		dotIndex: number = 0;
 
+		leftButton: Phaser.Button;
+		rightButton: Phaser.Button;
+		upButton: Phaser.Button;
+		downButton: Phaser.Button;
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -46,6 +51,33 @@ module MyGame {
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;
 			}
+		}
+
+		createButtons() {
+			const centerButtonX = this.game.world.centerX - 400;
+			const centerButtonY = this.game.world.centerY - 400;
+			const offset = 200;
+			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 0, 2);
+			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 0, 2);
+			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 0, 2);
+			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 0, 2);
+
+		}
+
+		leftClick() {
+			console.log("Left Click");
+		}
+
+		rightClick() {
+			console.log("Right Click");
+		}
+
+		upClick() {
+			console.log("Up Click");
+		}
+
+		downClick() {
+			console.log("Down Click");
 		}
 
 	}
