@@ -3,8 +3,16 @@ module MyGame {
 	const MAX_HEIGHT = 500;
 	const MIN_HEIGHT = 100;
 
-	export class TraceState extends Phaser.State {
+	enum Transmission {
+		Left = "Left",
+		Right = "Right",
+		Up = "Up",
+		Down = "Down",
+		None = "None",
+	}
 
+	export class TraceState extends Phaser.State {
+		
         traceDot: Phaser.Sprite
 		emitter: Phaser.Particles.Arcade.Emitter;
 		bitmapData: Phaser.BitmapData;
@@ -15,6 +23,10 @@ module MyGame {
 		upButton: Phaser.Button;
 		downButton: Phaser.Button;
 
+		transmitButton: Phaser.Button;
+
+		transmission: Transmission;
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -23,7 +35,7 @@ module MyGame {
 			this.traceDot = this.game.add.sprite(0, this.game.world.centerY, 'traceDot');
 			this.traceDot.anchor.setTo(0.5, 0.5);
 			this.game.physics.enable(this.traceDot, Phaser.Physics.ARCADE);
-
+			this.transmission = Transmission.None;
 			this.createEmitter();
 			this.createButtons();
 		}
@@ -63,27 +75,72 @@ module MyGame {
 			const offset = 50;
 			const centerButtonX = this.game.world.left + offset + 20;
 			const centerButtonY = this.game.world.height - offset - 50 - 20;
-			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 0, 2);
-			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 0, 2);
-			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 0, 2);
-			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 0, 2);
+			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 2, 3);
+			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 2, 3);
+			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
+			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
 
+			this.transmitButton = this.game.add.button(this.game.world.width - 200, centerButtonY, 'transmitButton', this.transmitClick, this, 1, 1, 1);
+		}
+
+		click(transmission: Transmission) {
+			this.leftButton.setFrames(1, 2, 3);
+			this.rightButton.setFrames(1, 2, 3);
+			this.upButton.setFrames(1, 2, 3);
+			this.downButton.setFrames(1, 2, 3);
+
+			if(transmission === this.transmission) {
+				this.transmission = Transmission.None;
+			} else {
+				this.transmission = transmission;
+			}
+
+			let activeButton = this.getActiveButton();
+
+			if(activeButton) {
+				activeButton.setFrames(0, 0, 0);
+				this.transmitButton.setFrames(0, 0, 0);
+			} else {
+				this.transmitButton.setFrames(1, 1, 1);
+			}
+
+		}
+
+		getActiveButton(): Phaser.Button {
+			if (this.transmission === Transmission.Left) {
+				return this.leftButton;
+			} else if (this.transmission === Transmission.Right) {
+				return this.rightButton;
+			} else if (this.transmission === Transmission.Up) {
+				return this.upButton;
+			} else if (this.transmission === Transmission.Down) {
+				return this.downButton;
+			} else {
+				return undefined;
+			}
 		}
 
 		leftClick() {
-			console.log("Left Click");
+			this.click(Transmission.Left);
 		}
 
 		rightClick() {
-			console.log("Right Click");
+			this.click(Transmission.Right);
 		}
 
 		upClick() {
-			console.log("Up Click");
+			this.click(Transmission.Up);
 		}
 
 		downClick() {
-			console.log("Down Click");
+			this.click(Transmission.Down);
+		}
+
+		transmitClick() {
+			if(this.transmission !== Transmission.None) {
+				console.log("Transmitting ", this.transmission);
+				this.click(Transmission.None);
+			}
 		}
 
 	}
