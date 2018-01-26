@@ -32,12 +32,16 @@ module MyGame {
 		}
 
 		update() {
-			this.traceDot.body.velocity.x = 200;
+			this.traceDot.body.velocity.x = 427;
 			this.emitter.x = this.traceDot.x;
 			this.emitter.y = this.traceDot.y;
-			this.traceDot.body.velocity.x = 500;
-			this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
 
+			let elaspedSinceLast = this.game.time.elapsed;
+
+			while (elaspedSinceLast > 13.7) {
+				this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
+				elaspedSinceLast -= 13.7;				
+			}
 
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;
