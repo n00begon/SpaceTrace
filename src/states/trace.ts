@@ -3,14 +3,6 @@ module MyGame {
 	const MAX_HEIGHT = 500;
 	const MIN_HEIGHT = 100;
 
-	enum Transmission {
-		Left = "Left",
-		Right = "Right",
-		Up = "Up",
-		Down = "Down",
-		None = "None",
-	}
-
 	export class TraceState extends Phaser.State {
 		
         traceDot: Phaser.Sprite
@@ -24,8 +16,9 @@ module MyGame {
 		downButton: Phaser.Button;
 
 		transmitButton: Phaser.Button;
-
 		transmission: Transmission;
+
+		gameState: SpaceTraceState;
 
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -38,15 +31,20 @@ module MyGame {
 			this.transmission = Transmission.None;
 			this.createEmitter();
 			this.createButtons();
+			this.gameState = new SpaceTraceState();
 		}
 
 		update() {
-			this.traceDot.body.velocity.x = 200;
+			this.traceDot.body.velocity.x = 427;
 			this.emitter.x = this.traceDot.x;
 			this.emitter.y = this.traceDot.y;
-			this.traceDot.body.velocity.x = 500;
-			this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
 
+			let elaspedSinceLast = this.game.time.elapsed;
+
+			while (elaspedSinceLast > 13.7) {
+				this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
+				elaspedSinceLast -= 13.7;				
+			}
 
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;
@@ -107,18 +105,19 @@ module MyGame {
 		}
 
 		getActiveButton(): Phaser.Button {
-			if (this.transmission === Transmission.Left) {
-				return this.leftButton;
-			} else if (this.transmission === Transmission.Right) {
-				return this.rightButton;
-			} else if (this.transmission === Transmission.Up) {
-				return this.upButton;
-			} else if (this.transmission === Transmission.Down) {
-				return this.downButton;
-			} else {
-				return undefined;
+			switch (this.transmission) {
+				case 'Left':
+					return this.leftButton;
+				case 'Right':
+					return this.rightButton;
+				case 'Up':
+					return this.upButton;
+				case 'Down':
+					return this.downButton;
+				default:
+					return undefined;
+				}
 			}
-		}
 
 		leftClick() {
 			this.click(Transmission.Left);
@@ -139,10 +138,10 @@ module MyGame {
 		transmitClick() {
 			if(this.transmission !== Transmission.None) {
 				console.log("Transmitting ", this.transmission);
+				this.gameState.move(this.transmission);
+				console.log(this.gameState);
 				this.click(Transmission.None);
 			}
 		}
-
 	}
-
 }

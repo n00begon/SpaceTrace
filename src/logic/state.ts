@@ -1,3 +1,5 @@
+module MyGame {
+
 function pickOne(array: any[]) {
     return array[Math.floor(Math.random() * array.length)];
 }
@@ -8,7 +10,6 @@ function pickDisease(): Disease {
     return pickOne(diseases);
 }
 
-type Movement = 'left' | 'right' | 'up' | 'down';
 interface Pos {
     x: number;
     y: number;
@@ -52,6 +53,23 @@ class Player {
         };
     }
 
+    move(movement: Transmission) {
+        switch (movement) {
+            case 'Left':
+                this.position.x--;
+                break;
+            case 'Right':
+                this.position.x++;
+                break;
+            case 'Up':
+                this.position.y--;
+                break;
+            case 'Down':
+                this.position.y++;
+                break;
+        }
+    }
+
     hasDisease(disease: Disease) {
         return this.diseases.reduce((memo, cur) => {
             if (cur === disease)
@@ -70,7 +88,7 @@ class Player {
     }
 }
 
-class State {
+export class SpaceTraceState {
     player: Player;
     space: SpaceNode[][] = [];
 
@@ -100,18 +118,8 @@ class State {
     // this handles applying 'normal' drugs, like to raiser/lower frequency
     // the Movement type is not correct (it is literal in respect to the grid we are moving in)
     // not sure what to call this
-    move(movement: Movement) {
-        const { position } = this.player;
-        switch (movement) {
-            case 'left':
-                position.x--;
-            case 'right':
-                position.x++;
-            case 'up':
-                position.y--;
-            case 'down':
-                position.y++;
-        }
+    move(movement: Transmission) {
+        this.player.move(movement);
 
         if (this.player.state === 'defibrillate') {
             this.player.health--; // the player needed to defibrillate, hurt them!
@@ -135,5 +143,11 @@ class State {
 
 }
 
-const state = new State();
+const state = new SpaceTraceState();
 console.log(state);
+// const test = new Player();
+// console.log(test.position)
+// test.move('left');
+// console.log(test.position)
+
+}
