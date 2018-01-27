@@ -26,7 +26,9 @@ module MyGame {
 		preload() {}
 
 		create() {
-			
+				this.line = [];
+				this.lineIndex = 0;
+				this.letterIndex = 0;
 				this.text = this.game.add.text(32, 32, '', { font: "18px Consolas", fill: "#19de65" });
 				this.nextLine();
 			}
@@ -58,6 +60,7 @@ module MyGame {
 
 		update() {
 			if (this.game.input.activePointer.isDown){
+				this.game.state.clearCurrentState();
 				this.game.state.start('Trace');
 			}
 		}
