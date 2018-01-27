@@ -9,6 +9,12 @@ module MyGame {
 			logo.anchor.setTo(0.5, 0.5);
 		}
 
+		update() {
+			if (this.game.input.activePointer.isDown){
+				this.game.state.start('Trace');
+			}
+		}
+
 	}
 
 }
