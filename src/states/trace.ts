@@ -9,8 +9,6 @@ module MyGame {
 		emitter: Phaser.Particles.Arcade.Emitter;
 		bitmapData: Phaser.BitmapData;
 		dotIndex: number = 0;
-		undrawnElapsedTime: number = 0;
-
 		leftButton: Phaser.Button;
 		rightButton: Phaser.Button;
 		upButton: Phaser.Button;
@@ -21,6 +19,7 @@ module MyGame {
 
 		gameState: SpaceTraceState;
 
+		signalInfo: Signal;
 		gameGrid: Phaser.Sprite[][];
 
 		preload() {
@@ -36,24 +35,21 @@ module MyGame {
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-		}
 
+			this.signalInfo = new Signal(TraceA, this.game.width);
+			this.traceDot.body.velocity.x = this.signalInfo.getVelociy();
+		}
+		
 		update() {
-			this.traceDot.body.velocity.x = 427;
 			this.emitter.x = this.traceDot.x;
 			this.emitter.y = this.traceDot.y;
-
-			this.undrawnElapsedTime += this.game.time.elapsed;
-
-			while (this.undrawnElapsedTime > 13.7) {
-				this.traceDot.y = this.game.world.centerY - TraceA[this.dotIndex++ % TraceA.length] * MAX_HEIGHT;
-				this.undrawnElapsedTime -= 13.7;
-				
-				if (this.undrawnElapsedTime < 0) {
-					this.undrawnElapsedTime = 0;
-				}
-			}
-
+			
+			const elapsedTime = this.game.time.elapsed;
+			
+			const drawPoints = this.signalInfo.getNextYPoints(elapsedTime);
+			
+			this.traceDot.y = this.game.world.centerY - drawPoints.pop();
+			
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;
 			}
