@@ -22,6 +22,7 @@ export class Signal {
     leftoverElapsedTime: number;
     hasInversion: boolean;
     hasReversal: boolean;
+    defibrillateNeeded: boolean;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
@@ -46,7 +47,9 @@ export class Signal {
     } 
 
     getVelociy() {
-        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN);
+        // Using rate increase as the diff because the healthy amount per screen happens normally at the
+        // top left of the state grid, while the healthy one should be the middle of it
+        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN) / (RATE_INCREASE * RATE_INCREASE);
     }
 
     increaseAmplitude() {
@@ -131,6 +134,10 @@ export class Signal {
     }
 
     getYForPoint(distanceFromStart: number) {
+        if (this.defibrillateNeeded) {
+            return this.trace[Math.floor(Math.random() * this.trace.length)] * HEALTHY_AMPLITUDE_MULTIPLIER;
+        }
+
         let pixelsThroughTrace = distanceFromStart * this.rateMultiplier;
         while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
        
@@ -158,6 +165,10 @@ export class Signal {
                     break;
             }  
         })
+    }
+
+    setDefibrillateNeeded(needed: boolean) {
+        this.defibrillateNeeded = needed;
     }
 
 }
