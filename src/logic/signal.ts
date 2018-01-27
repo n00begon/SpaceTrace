@@ -22,6 +22,7 @@ export class Signal {
     leftoverElapsedTime: number;
     hasInversion: boolean;
     hasReversal: boolean;
+    defibrillateNeeded: boolean;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
@@ -131,6 +132,10 @@ export class Signal {
     }
 
     getYForPoint(distanceFromStart: number) {
+        if (this.defibrillateNeeded) {
+            return this.trace[Math.floor(Math.random() * this.trace.length)];
+        }
+
         let pixelsThroughTrace = distanceFromStart * this.rateMultiplier;
         while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
        
@@ -158,6 +163,10 @@ export class Signal {
                     break;
             }  
         })
+    }
+
+    setDefibrillateNeeded(needed: boolean) {
+        this.defibrillateNeeded = needed;
     }
 
 }

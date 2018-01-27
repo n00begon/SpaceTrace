@@ -280,6 +280,7 @@ module MyGame {
 			}
 
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
+			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
 			this.transmitClick(); //debug only
