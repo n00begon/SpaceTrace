@@ -205,28 +205,21 @@ module MyGame {
 		}
 
 		createButtons() {
-			const offset = 50;
-			const moveButtonX = this.game.world.width/2;
-			const moveButtonY = this.game.world.height - offset - 50 - 20;
-			this.leftButton = this.game.add.button(moveButtonX - offset, moveButtonY, 'button', this.leftClick, this, 1, 2, 3);
-			this.rightButton = this.game.add.button(moveButtonX + offset, moveButtonY, 'button', this.rightClick, this, 1, 2, 3);
-			this.upButton = this.game.add.button(moveButtonX, moveButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
-			this.downButton = this.game.add.button(moveButtonX, moveButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
-
-
-			this.defibrillateButton = this.game.add.button(this.game.world.width - 300, moveButtonY, 'defibrillateButton', this.defibrillateClick, this, 1, 2, 3);
+			const offset = 20;
+			const size = 170 + offset;
+			const buttonX = this.game.world.width/2 - size/2;
+			const buttonY = this.game.world.height - offset - 50 - 50;
+			this.leftButton = this.game.add.button(buttonX - (2 * size), buttonY, 'button', this.leftClick, this, 0, 2, 1);
+			this.rightButton = this.game.add.button(buttonX - size, buttonY, 'button', this.rightClick, this, 0, 2, 1);
+			this.defibrillateButton = this.game.add.button(buttonX, buttonY, 'button', this.defibrillateClick, this, 0, 2, 1);
+			this.upButton = this.game.add.button(buttonX + size, buttonY, 'button', this.upClick, this, 0, 2, 1);
+			this.downButton = this.game.add.button(buttonX + (2 * size), buttonY, 'button', this.downClick, this, 0, 2, 1);
 		}
 
 		click(transmission: Transmission) {
 			if(!this.consoleActive) {
 				return;
 			}
-			this.leftButton.setFrames(1, 2, 3);
-			this.rightButton.setFrames(1, 2, 3);
-			this.upButton.setFrames(1, 2, 3);
-			this.downButton.setFrames(1, 2, 3);
-
-			this.defibrillateButton.setFrames(1, 2, 3);
 
 			if(transmission === this.transmission) {
 				this.transmission = Transmission.None;
@@ -255,26 +248,9 @@ module MyGame {
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
 		
 
-			this.transmitClick(); //debug only
+			this.transmitClick();
 
 		}
-
-		getActiveButton(): Phaser.Button {
-			switch (this.transmission) {
-				case 'Left':
-					return this.leftButton;
-				case 'Right':
-					return this.rightButton;
-				case 'Up':
-					return this.upButton;
-				case 'Down':
-					return this.downButton;
-				case 'Defibrillate':
-					return this.defibrillateButton;
-				default:
-					return undefined;
-				}
-			}
 
 		leftClick() {
 			this.click(Transmission.Left);
@@ -290,22 +266,6 @@ module MyGame {
 
 		downClick() {
 			this.click(Transmission.Down);
-		}
-
-		triangleClick() {
-			this.click(Transmission.Triangle);
-		}
-
-		circleClick() {
-			this.click(Transmission.Circle);
-		}
-
-		crossClick() {
-			this.click(Transmission.Cross);
-		}
-
-		squareClick() {
-			this.click(Transmission.Square);
 		}
 
 		defibrillateClick() {
