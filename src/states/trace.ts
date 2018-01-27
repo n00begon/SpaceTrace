@@ -108,6 +108,25 @@ module MyGame {
 				this.transmitButton.setFrames(1, 1, 1);
 			}
 
+			switch (this.transmission) {
+				case 'Left':
+					this.signalInfo.decreaseRate();
+					break;
+				case 'Right':
+					this.signalInfo.increaseRate();
+					break;
+				case 'Up':
+					this.signalInfo.increaseAmplitude();
+					break;
+				case 'Down':
+					this.signalInfo.decreaseAmplitude();
+					break;
+				default:
+					break;
+			}
+
+			this.transmitClick(); //debug only
+
 		}
 
 		getActiveButton(): Phaser.Button {
