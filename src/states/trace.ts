@@ -31,6 +31,8 @@ module MyGame {
 		signalInfo: Signal;
 		gameGrid: Phaser.Sprite[][];
 
+		lastDistanceDrawn: number;
+
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 		}
@@ -87,12 +89,24 @@ module MyGame {
 
 			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
-			const positionStartPoint = positionFurtherestPoint - this.traceDots.length * 4;
-			this.traceDots.forEach((traceDot, i) => {
-				const absX = positionStartPoint + i * 4;
+			const distanceToDraw = positionFurtherestPoint - this.lastDistanceDrawn;
+			const prevLastDistanceDrawn = this.lastDistanceDrawn;
+
+			this.lastDistanceDrawn = positionFurtherestPoint;
+
+			const dotsToMove = distanceToDraw / 4;
+
+			let dotsMoved = 0;
+			while(dotsMoved < dotsToMove) {
+				const traceDot = this.traceDots.shift();
+				const absX = prevLastDistanceDrawn + dotsMoved * 4;
 				traceDot.x = (absX) % this.game.world.width;
 				traceDot.y = this.game.world.centerY - this.signalInfo.getYForPoint( absX);
+				this.traceDots.push(traceDot);
+				dotsMoved++;
+			}
 
+			this.traceDots.forEach((traceDot, i) => {
 				if ( i > 0) {
 					const prevDot = this.traceDots[i - 1];
 
