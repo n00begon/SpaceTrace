@@ -110,13 +110,8 @@ module MyGame {
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			const playerPos = this.gameState.player.position;
 
-			for (let i = 0; i <= playerPos.x; i++) {
-				this.signalInfo.increaseRate();
-			}
+			this.signalInfo.updateStateModifiers(playerPos);
 
-			for (let i = 4; i >= playerPos.y; i--) {
-				this.signalInfo.increaseAmplitude();
-			}
 
 			for (let i = 0; i < NUM_DOTS; i++) {
 				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
@@ -235,30 +230,14 @@ module MyGame {
 				this.transmission = transmission;
 			}
 
-			//Change this to update based on the player state?
-			switch (this.transmission) {
-				case 'Left':
-					this.signalInfo.decreaseRate();
-					break;
-				case 'Right':
-					this.signalInfo.increaseRate();
-					break;
-				case 'Up':
-					this.signalInfo.increaseAmplitude();
-					break;
-				case 'Down':
-					this.signalInfo.decreaseAmplitude();
-					break;
-				default:
-					break;
-			}
-
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
 			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
 			this.transmitClick();
 
+			const pos = this.gameState.player.position;
+			this.signalInfo.updateStateModifiers(pos);
 		}
 
 		leftClick() {
@@ -334,7 +313,7 @@ module MyGame {
 
 		addText(input: string, color: string) {
 			//this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
-			this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
+			this.style = { font: "60px Space Mono", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
 			let text = this.game.add.text(0, 0, input, this.style);
 			text.anchor.set(0.5);
 			text.x = this.game.width/2
