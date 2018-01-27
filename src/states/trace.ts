@@ -45,6 +45,15 @@ module MyGame {
 			this.createGameGrid();
 			
 			this.signalInfo = new Signal(TraceA, this.game.width);
+			const playerPos = this.gameState.player.position;
+
+			for (let i = 0; i <= playerPos.x; i++) {
+				this.signalInfo.increaseRate();
+			}
+
+			for (let i = 4; i >= playerPos.y; i--) {
+				this.signalInfo.increaseAmplitude();
+			}
 
 			for (let i = 0; i < NUM_DOTS; i++) {
 				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
@@ -98,6 +107,14 @@ module MyGame {
 	
 				});
 			}
+
+
+			if (this.gameState.player.state === 'dead') {
+				// The guy is dead
+				// Display some text
+				// Click to restart
+				this.game.state.start("Game");	
+			} 
 		}
 
 		createEmitter() {
