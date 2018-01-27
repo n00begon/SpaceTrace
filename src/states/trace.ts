@@ -38,6 +38,16 @@ module MyGame {
 
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			this.traceDot.body.velocity.x = this.signalInfo.getVelociy();
+
+			const playerPos = this.gameState.player.position;
+
+			for (let i = 0; i <= playerPos.x; i++) {
+				this.signalInfo.increaseRate();
+			}
+
+			for (let i = 4; i >= playerPos.y; i--) {
+				this.signalInfo.increaseAmplitude();
+			}
 		}
 		
 		update() {
@@ -55,6 +65,14 @@ module MyGame {
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;
 			}
+
+
+			if (this.gameState.player.state === 'dead') {
+				// The guy is dead
+				// Display some text
+				// Click to restart
+				this.game.state.start("Game");	
+			} 
 		}
 
 		createEmitter() {
