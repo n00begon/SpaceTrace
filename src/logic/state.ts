@@ -28,7 +28,7 @@ const SPACE_CENTER = Math.ceil(MAX_SPACE_SIZE / 2);
 
 const STARTING_HEALTH = 5;
 
-type PlayerState = 'active' | 'defibrillate' | 'dead';
+type PlayerState = 'active' | 'defibrillate' | 'stable' | 'dead';
 
 class Player {
     position: Pos;

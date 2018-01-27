@@ -169,17 +169,17 @@ module MyGame {
 						case 'none':
 							this.gameGrid[x][y].frame = 0;
 							break;
-						case 'triangle':
-							this.gameGrid[x][y].frame = 3;
-							break;
-						case 'circle':
-							this.gameGrid[x][y].frame = 4;
-							break;
 						case 'square':
+							this.gameGrid[x][y].frame = 1;
+							break;
+						case 'triangle':
 							this.gameGrid[x][y].frame = 2;
 							break;
+						case 'circle':
+							this.gameGrid[x][y].frame = 3;
+							break;
 						case 'cross':
-							this.gameGrid[x][y].frame = 5;
+							this.gameGrid[x][y].frame = 4;
 							break;
 						default:
 							return undefined;
@@ -187,6 +187,7 @@ module MyGame {
 				}
 			}
 			let playerPosition = this.gameState.player.position;
+			let playerState = this.gameState.player.state;
 			this.gameGrid[playerPosition.x][playerPosition.y].frame = 1;
 		}
 	}
