@@ -107,13 +107,8 @@ module MyGame {
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			const playerPos = this.gameState.player.position;
 
-			for (let i = 0; i <= playerPos.x; i++) {
-				this.signalInfo.increaseRate();
-			}
+			this.signalInfo.updateStateModifiers(playerPos);
 
-			for (let i = 4; i >= playerPos.y; i--) {
-				this.signalInfo.increaseAmplitude();
-			}
 
 			for (let i = 0; i < NUM_DOTS; i++) {
 				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
@@ -234,30 +229,14 @@ module MyGame {
 				this.transmission = transmission;
 			}
 
-			//Change this to update based on the player state?
-			switch (this.transmission) {
-				case 'Left':
-					this.signalInfo.decreaseRate();
-					break;
-				case 'Right':
-					this.signalInfo.increaseRate();
-					break;
-				case 'Up':
-					this.signalInfo.increaseAmplitude();
-					break;
-				case 'Down':
-					this.signalInfo.decreaseAmplitude();
-					break;
-				default:
-					break;
-			}
-
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
 			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
 			this.transmitClick(); //debug only
 
+			const pos = this.gameState.player.position;
+			this.signalInfo.updateStateModifiers(pos);
 		}
 
 		getActiveButton(): Phaser.Button {
