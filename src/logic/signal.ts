@@ -16,6 +16,10 @@ export class Signal {
     trace: number[];
     drawWidth: number;
     tracePointIndex: number;
+    prevCycleCount: number;
+    rateChanger: number;
+    hasArrhythmia: boolean;
+    leftoverElapsedTime: number;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 500;
@@ -23,7 +27,15 @@ export class Signal {
         this.trace = trace;
         this.tracePointIndex = 0;
         this.drawWidth = drawWidth;
+        this.prevCycleCount = this.getCycleCount();
+        this.rateChanger = this.getMillisecondsPerPoint();
+        this.hasArrhythmia = false;
+        this.leftoverElapsedTime = 0;
     }
+
+    getCycleCount() {
+        return Math.floor(this.tracePointIndex / this.trace.length * 2);
+    } 
 
     getVelociy() {
         return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN);
@@ -49,11 +61,13 @@ export class Signal {
 
     increaseRate() {
         this.rateMultiplier += RATE_INCREASE;
+        this.rateChanger = this.getMillisecondsPerPoint();
     }
 
     decreaseRate() {
         if (this.rateMultiplier > 0) {
             this.rateMultiplier -= RATE_INCREASE;
+            this.rateChanger = this.getMillisecondsPerPoint();
         }
     }
 
@@ -66,18 +80,32 @@ export class Signal {
         return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
     }
 
+    getArrhythmiaPulseDistVal(): number {
+        const upper = Math.ceil(Math.random());
+        const baseVal = (Math.random() + Math.random()) / 2;
+        return upper ? 1 - baseVal: baseVal;
+    }
+
     getNextYPoints(elapsedTime: number, numPrevPoints: number): number[] {
-        const rateChanger = this.getMillisecondsPerPoint();
-        let innerElapsedTime = elapsedTime; 
+        let innerElapsedTime = elapsedTime + this.leftoverElapsedTime; 
 
-        let newPoints = [];
+        let resultPoints = [];
+ 
+        while (innerElapsedTime > this.rateChanger) {
+            resultPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
+            innerElapsedTime -= this.rateChanger;
 
-        while (innerElapsedTime > rateChanger) {
-            newPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
-            innerElapsedTime -= rateChanger;
+            let newCycleCount = this.getCycleCount();
+            if (newCycleCount > this.prevCycleCount && this.hasArrhythmia) {
+                this.rateChanger = this.getMillisecondsPerPoint() * (this.getArrhythmiaPulseDistVal());
+                this.prevCycleCount = newCycleCount;
+            }
         }
 
-        return this.getPreviousYPoints(numPrevPoints).concat(newPoints).reverse();
+        this.leftoverElapsedTime = innerElapsedTime;
+
+        //return resultPoints;
+        return this.getPreviousYPoints(numPrevPoints).concat(resultPoints).reverse();
     }
 
     getPreviousYPoints(num: number): number[] {
