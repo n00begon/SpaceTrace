@@ -5,6 +5,8 @@ module MyGame {
 	const NUM_DOTS = 200;
 
 	export class TraceState extends Phaser.State {
+		screen: Phaser.Sprite;
+		filter: Phaser.Filter;
 		
 		traceDots: Phaser.Sprite[];
 		lines: Phaser.Line[] = [];
@@ -32,9 +34,66 @@ module MyGame {
 		gameGrid: Phaser.Sprite[][];
 
 		lastDistanceDrawn: number;
-
+		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
+			var fragmentSrc = [
+				"precision mediump float;",
+				// Incoming texture coordinates. 
+				'varying vec2 vTextureCoord;',
+				// Incoming vertex color
+				'varying vec4 vColor;',
+				// Sampler for a) sprite image or b) rendertarget in case of game.world.filter
+				'uniform sampler2D uSampler;',
+		
+				"uniform vec2      resolution;",
+				"uniform float     time;",
+				"uniform vec2      mouse;",
+		
+				"void main( void ) {",
+				// colorRGBA = (y % 2) * texel(u,v);
+				"gl_FragColor = mod(gl_FragCoord.y,2.0) * texture2D(uSampler, vTextureCoord);",
+				"}"
+			];
+		
+			// var fragmentSrc = [
+
+			// 	"precision mediump float;",
+		
+			// 	"uniform float     time;",
+			// 	"uniform vec2      resolution;",
+			// 	"uniform vec2      mouse;",
+		
+			// 	"float noise(vec2 pos) {",
+			// 		"return fract(sin(dot(pos, vec2(12.9898 - time,78.233 + time))) * 43758.5453);",
+			// 	"}",
+		
+			// 	"void main( void ) {",
+		
+			// 		"vec2 normalPos = gl_FragCoord.xy / resolution.xy;",
+			// 		"float pos = (gl_FragCoord.y / resolution.y);",
+			// 		"float distortion = clamp(1.0 - (0.1) * 3.0, 0.0, 1.0);",
+		
+			// 		"pos -= (distortion * distortion) * 0.1;",
+		
+			// 		"float c = sin(pos * 400.0) * 0.4 + 0.4;",
+			// 		"c = pow(c, 0.2);",
+			// 		"c *= 0.2;",
+		
+			// 		"float band_pos = fract(time * 0.1) * 3.0 - 1.0;",
+			// 		"c += clamp( (1.0 - abs(band_pos - pos) * 10.0), 0.0, 1.0) * 0.1;",
+		
+			// 		"c += distortion * 0.08;",
+			// 		"// noise",
+			// 		"c += (noise(gl_FragCoord.xy) - 0.5) * (0.09);",
+		
+		
+			// 		"gl_FragColor = vec4( 0.0, c, 0.0, 1.0 );",
+			// 	"}"
+			//];
+			
+			this.filter = new Phaser.Filter(this.game, null, fragmentSrc);
+			this.game.world.filters = [this.filter];
 		}
 
 		create() {
@@ -71,6 +130,7 @@ module MyGame {
 					this.lines.push(line);
 				}
 			}
+			//this.createFilter();
 		}
 
 		render() {
@@ -126,6 +186,8 @@ module MyGame {
 				endLogo.alpha = 0;
 				this.game.add.tween(endLogo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 			} 
+
+			this.filter.update();
 		}
 
 		createEmitter() {
@@ -305,6 +367,54 @@ module MyGame {
 			this.redrawState();
 		}
 
+        createFilter() {
+            this.filter = new Phaser.Filter(this.game, null, fragmentSrc);
+            this.filter.setResolution(800, 600);
+            //  From http://glslsandbox.com/e#18578.0
+        
+            var fragmentSrc = [
+        
+                "precision mediump float;",
+        
+                "uniform float     time;",
+                "uniform vec2      resolution;",
+                "uniform vec2      mouse;",
+        
+                "float noise(vec2 pos) {",
+                    "return fract(sin(dot(pos, vec2(12.9898 - time,78.233 + time))) * 43758.5453);",
+                "}",
+        
+                "void main( void ) {",
+        
+                    "vec2 normalPos = gl_FragCoord.xy / resolution.xy;",
+                    "float pos = (gl_FragCoord.y / resolution.y);",
+                    "float mouse_dist = length(vec2((mouse.x - normalPos.x) * (resolution.x / resolution.y) , mouse.y - normalPos.y));",
+                    "float distortion = clamp(1.0 - (mouse_dist + 0.1) * 3.0, 0.0, 1.0);",
+        
+                    "pos -= (distortion * distortion) * 0.1;",
+        
+                    "float c = sin(pos * 400.0) * 0.4 + 0.4;",
+                    "c = pow(c, 0.2);",
+                    "c *= 0.2;",
+        
+                    "float band_pos = fract(time * 0.1) * 3.0 - 1.0;",
+                    "c += clamp( (1.0 - abs(band_pos - pos) * 10.0), 0.0, 1.0) * 0.1;",
+        
+                    "c += distortion * 0.08;",
+                    "// noise",
+                    "c += (noise(gl_FragCoord.xy) - 0.5) * (0.09);",
+        
+        
+                    "gl_FragColor = vec4( 0.0, c, 0.0, 1.0 );",
+                "}"
+            ];
+            this.screen = this.game.add.sprite();
+            this.screen.width = 800;
+            this.screen.height = 600;
+        
+            this.screen.filters = [ this.filter ];
+        }
+
 		redrawState() {
 			for(let x = 0; x < this.gameState.space.length; ++x) {
 				for (let y = 0; y < this.gameState.space[x].length; ++y) {
@@ -348,4 +458,6 @@ module MyGame {
 				}
 		}
 	}
+
+	
 }
