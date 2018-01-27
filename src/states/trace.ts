@@ -24,7 +24,6 @@ module MyGame {
 		defibrillateButton: Phaser.Button;
 		transmitButton: Phaser.Button;
 
-
 		transmission: Transmission;
 
 		gameState: SpaceTraceState;
@@ -110,10 +109,7 @@ module MyGame {
 
 
 			if (this.gameState.player.state === 'dead') {
-				// The guy is dead
-				// Display some text
-				// Click to restart
-				this.game.state.start("Game");	
+				this.signalInfo.flatline();	
 			} 
 		}
 
