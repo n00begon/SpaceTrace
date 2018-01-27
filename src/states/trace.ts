@@ -149,6 +149,7 @@ module MyGame {
 				this.gameState.move(this.transmission);
 				console.log(this.gameState);
 				this.click(Transmission.None);
+				this.redrawState();
 			}
 		}
 
@@ -161,17 +162,36 @@ module MyGame {
 					this.gameGrid[x][y] = this.game.add.sprite(x * offset, y * offset, 'grid');
 				}
 			}
+			this.redrawState();
 		}
 
-		drawGameState() {
-			const offset = 20;
-			const gridX = this.game.world.width - 40;
-			const gridY = this.game.world.top - 40;
+		redrawState() {
 			for(let x = 0; x < this.gameState.space.length; ++x) {
-				for (let y = 0; y < this.gameState.space[0].length; ++y) {
-
+				for (let y = 0; y < this.gameState.space[x].length; ++y) {
+					let disease = this.gameState.space[x][y].disease;
+					switch (disease) {
+						case 'none':
+							this.gameGrid[x][y].frame = 0;
+							break;
+						case 'triangle':
+							this.gameGrid[x][y].frame = 3;
+							break;
+						case 'circle':
+							this.gameGrid[x][y].frame = 4;
+							break;
+						case 'square':
+							this.gameGrid[x][y].frame = 2;
+							break;
+						case 'cross':
+							this.gameGrid[x][y].frame = 5;
+							break;
+						default:
+							return undefined;
+						}
 				}
 			}
+			let playerPosition = this.gameState.player.position;
+			this.gameGrid[playerPosition.x][playerPosition.y].frame = 1;
 		}
 	}
 }
