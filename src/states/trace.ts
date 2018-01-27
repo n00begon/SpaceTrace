@@ -277,7 +277,7 @@ module MyGame {
 
 		addText(input: string, color: string) {
 			//this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
-			this.style = { font: "60px VT323", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
+			this.style = { font: "60px Space Mono", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
 			let text = this.game.add.text(0, 0, input, this.style);
 			text.anchor.set(0.5);
 			text.x = this.game.width/2
