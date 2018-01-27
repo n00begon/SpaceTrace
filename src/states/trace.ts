@@ -28,7 +28,8 @@ module MyGame {
 		gameGrid: Phaser.Sprite[][];
 
 		lastDistanceDrawn: number;
-
+		signalStrength: number;
+		consoleActive: boolean;
 		style;
 		
 		preload() {
@@ -101,7 +102,8 @@ module MyGame {
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-			
+			this.signalStrength = 5;
+			this.consoleActive = true;
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			const playerPos = this.gameState.player.position;
 
@@ -181,15 +183,6 @@ module MyGame {
 				}
 			});
 
-
-			if (this.gameState.player.state === 'dead') {
-				this.signalInfo.flatline();	
-				let endLogo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'deceasedLogo');
-
-				endLogo.alpha = 0;
-				this.game.add.tween(endLogo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-			} 
-
 			this.filter.update();
 		}
 
@@ -225,6 +218,9 @@ module MyGame {
 		}
 
 		click(transmission: Transmission) {
+			if(!this.consoleActive) {
+				return;
+			}
 			this.leftButton.setFrames(1, 2, 3);
 			this.rightButton.setFrames(1, 2, 3);
 			this.upButton.setFrames(1, 2, 3);
@@ -323,6 +319,7 @@ module MyGame {
 				console.log(this.gameState);
 				this.click(Transmission.None);
 				this.redrawState();
+				this.checkStatus();
 			}
 		}
 
@@ -338,12 +335,29 @@ module MyGame {
 			this.redrawState();
 		}
 
+		checkStatus() {
+			if (this.gameState.player.state === 'dead') {
+				this.signalInfo.flatline();	
+				this.addText("Patient Deceased", "#ff0044");
+				this.consoleActive = false;
+			} else if (this.gameState.player.state === 'stable') {
+				this.addText("Patient Stable", "#00ff44");
+				this.consoleActive = false;
+			} else if (this.signalStrength <= 0) {
+				this.addText("Signal Lost", "#aaaaff");
+				this.consoleActive = false;
+			}
+		}
+
+
 		addText(input: string, color: string) {
 			this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
 			let text = this.game.add.text(0, 0, input, this.style);
 			text.anchor.set(0.5);
 			text.x = this.game.width/2
 			text.y = this.game.height/2;
+			text.alpha = 0;
+			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
 
         createFilter() {
