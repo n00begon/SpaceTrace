@@ -4,6 +4,11 @@ module MyGame {
 		Right = "Right",
 		Up = "Up",
 		Down = "Down",
-		None = "None",
+        None = "None",
+        Triangle = "Triangle",
+        Circle = "Circle",
+        Square = "Square",
+        Cross = "Cross",
+        Defibrillate = "Defibrillate",
 	}
 }
