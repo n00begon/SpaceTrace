@@ -66,18 +66,18 @@ export class Signal {
         return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
     }
 
-    getNextYPoints(elapsedTime: number): number[] {
+    getNextYPoints(elapsedTime: number, numPrevPoints: number): number[] {
         const rateChanger = this.getMillisecondsPerPoint();
         let innerElapsedTime = elapsedTime; 
 
-        let resultPoints = [];
+        let newPoints = [];
 
         while (innerElapsedTime > rateChanger) {
-            resultPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
+            newPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
             innerElapsedTime -= rateChanger;
         }
 
-        return resultPoints;
+        return this.getPreviousYPoints(numPrevPoints).concat(newPoints).reverse();
     }
 
     getPreviousYPoints(num: number): number[] {
