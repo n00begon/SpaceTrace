@@ -46,7 +46,7 @@ var wfconfig = {
 	},
  
 	google: {
-		families: ['VT323', 'Ubuntu Mono']
+		families: ['VT323', 'Ubuntu Mono', 'Space Mono']
 	}
  
 };
