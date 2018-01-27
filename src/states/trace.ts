@@ -110,6 +110,10 @@ module MyGame {
 
 			if (this.gameState.player.state === 'dead') {
 				this.signalInfo.flatline();	
+				let endLogo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'deceasedLogo');
+
+				endLogo.alpha = 0;
+				this.game.add.tween(endLogo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 			} 
 		}
 
