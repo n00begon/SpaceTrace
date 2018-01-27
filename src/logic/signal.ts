@@ -93,7 +93,7 @@ export class Signal {
         return upper ? 1 - baseVal: baseVal;
     }
 
-    getNextYPoints(elapsedTime: number): number[] {
+    getNextYPoints(elapsedTime: number, numPrevPoints: number): number[] {
         let innerElapsedTime = elapsedTime + this.leftoverElapsedTime; 
 
         let resultPoints = [];
@@ -111,7 +111,8 @@ export class Signal {
 
         this.leftoverElapsedTime = innerElapsedTime;
 
-        return resultPoints;
+        //return resultPoints;
+        return this.getPreviousYPoints(numPrevPoints).concat(resultPoints).reverse();
     }
 
     getPreviousYPoints(num: number): number[] {
