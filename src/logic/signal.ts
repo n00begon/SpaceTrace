@@ -19,7 +19,7 @@ export class Signal {
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 500;
-        this.rateMultiplier = 3;
+        this.rateMultiplier = 1;
         this.trace = trace;
         this.tracePointIndex = 0;
         this.drawWidth = drawWidth;
@@ -57,6 +57,11 @@ export class Signal {
         }
     }
 
+    flatline() {
+        this.amplitudeMultiplier = 0;
+    }
+  
+
     getMillisecondsPerPoint() {
         return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
     }
@@ -72,6 +77,19 @@ export class Signal {
             innerElapsedTime -= rateChanger;
         }
 
+        return resultPoints;
+    }
+
+    getPreviousYPoints(num: number): number[] {
+        let index = this.tracePointIndex;
+        const resultPoints = [];
+        for (let i = 0; i < num; i++) {
+            const traceIndex = index % this.trace.length;
+            resultPoints.push(this.trace[index % this.trace.length] * this.amplitudeMultiplier);
+            index--;
+            if (index < 0)
+                index = this.trace.length - 1;
+        }
         return resultPoints;
     }
 
