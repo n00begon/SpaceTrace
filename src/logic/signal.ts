@@ -5,7 +5,7 @@ const HEALTHY_MS_PER_SCREEN = HEALTHY_BEATS_PER_SCREEN * HEALTHY_BPS * 1000;
 const HEALTHY_MULTIPLIER = 1;
 const HEALTHY_AMPLITUDE_MULTIPLIER = 500;
 const AMPLITUDE_INCREASE = 250;
-const RATE_INCREASE = 0.5;
+const RATE_INCREASE = 1.3;
 
 module MyGame {
 
@@ -25,7 +25,7 @@ export class Signal {
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
-        this.rateMultiplier = 0.5;
+        this.rateMultiplier = trace.length / 1000;
         this.trace = trace;
         this.tracePointIndex = 0;
         this.drawWidth = drawWidth;
@@ -38,6 +38,7 @@ export class Signal {
         this.hasReversal = false;
 
         this.leftoverElapsedTime = 0;
+
     }
 
     getCycleCount() {
@@ -67,13 +68,14 @@ export class Signal {
     }
 
     increaseRate() {
-        this.rateMultiplier += RATE_INCREASE;
+        this.rateMultiplier *= RATE_INCREASE;
         this.rateChanger = this.getMillisecondsPerPoint();
+
     }
 
     decreaseRate() {
         if (this.rateMultiplier > 0) {
-            this.rateMultiplier -= RATE_INCREASE;
+            this.rateMultiplier /= RATE_INCREASE;
             this.rateChanger = this.getMillisecondsPerPoint();
         }
     }
@@ -112,20 +114,28 @@ export class Signal {
         this.leftoverElapsedTime = innerElapsedTime;
 
         //return resultPoints;
-        return this.getPreviousYPoints(numPrevPoints).concat(resultPoints).reverse();
+        return this.getPreviousYPoints(this.tracePointIndex - resultPoints.length, numPrevPoints - resultPoints.length).concat(resultPoints);
     }
 
-    getPreviousYPoints(num: number): number[] {
-        let index = this.tracePointIndex;
+    getPreviousYPoints(initialIndex: number, num: number): number[] {
+        let index = initialIndex - 1;
         const resultPoints = [];
         for (let i = 0; i < num; i++) {
             const traceIndex = index % this.trace.length;
-            resultPoints.push(this.trace[index % this.trace.length] * this.amplitudeMultiplier);
+            resultPoints.unshift(this.trace[traceIndex] * this.amplitudeMultiplier);
             index--;
             if (index < 0)
                 index = this.trace.length - 1;
         }
         return resultPoints;
+    }
+
+    getYForPoint(distanceFromStart: number) {
+        let pixelsThroughTrace = distanceFromStart * this.rateMultiplier;
+        while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
+       
+        const traceIndex = Math.floor(pixelsThroughTrace % this.trace.length);
+        return this.trace[traceIndex] * this.amplitudeMultiplier;
     }
 
     setCurrentDiseases(diseases: Disease[] ) {
