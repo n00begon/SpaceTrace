@@ -85,7 +85,7 @@ module MyGame {
 			//this.emitter.x = this.traceDots[this.traceDots.length - 1].x;
 			//this.emitter.y = this.traceDots[this.traceDots.length - 1].y;
 
-			const positionFurtherestPoint = this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy();
+			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
 			const positionStartPoint = positionFurtherestPoint - this.traceDots.length * 4;
 			this.traceDots.forEach((traceDot, i) => {
