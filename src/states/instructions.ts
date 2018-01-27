@@ -60,8 +60,11 @@ module MyGame {
 
 		update() {
 			if (this.game.input.activePointer.isDown){
+				let theme = this.game.cache.getSound('theme');
+				this.game.cache.removeSound('theme');
 				this.game.state.clearCurrentState();
 				this.game.state.start('Trace');
+
 			}
 		}
 

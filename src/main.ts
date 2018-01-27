@@ -2,7 +2,6 @@ module MyGame {
 
 	export class PhaserGame extends Phaser.Game
 	{
-		
 		constructor()
 		{
 			super(1000, 600, Phaser.AUTO, 'content', null);
