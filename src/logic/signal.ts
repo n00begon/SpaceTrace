@@ -47,7 +47,9 @@ export class Signal {
     } 
 
     getVelociy() {
-        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN);
+        // Using rate increase as the diff because the healthy amount per screen happens normally at the
+        // top left of the state grid, while the healthy one should be the middle of it
+        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN) / (RATE_INCREASE * RATE_INCREASE);
     }
 
     increaseAmplitude() {
