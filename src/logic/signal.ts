@@ -133,7 +133,7 @@ export class Signal {
 
     getYForPoint(distanceFromStart: number) {
         if (this.defibrillateNeeded) {
-            return this.trace[Math.floor(Math.random() * this.trace.length)];
+            return this.trace[Math.floor(Math.random() * this.trace.length)] * HEALTHY_AMPLITUDE_MULTIPLIER;
         }
 
         let pixelsThroughTrace = distanceFromStart * this.rateMultiplier;
