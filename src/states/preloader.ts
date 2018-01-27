@@ -14,6 +14,8 @@ module MyGame {
 			this.game.load.spritesheet('transmitButton', 'assets/transmitButton.png', 100, 50);
 			this.game.load.spritesheet('defibrillateButton', 'assets/defibrillateButton.png', 100, 50);
 			
+			this.game.load.spritesheet('deceasedLogo', 'assets/deceased.png', 400, 100);
+
 			this.game.load.spritesheet('grid', 'assets/grid.png', 20, 20);
 		}
 
