@@ -56,7 +56,13 @@ module MyGame {
 		}
 
 		render() {
-			this.lines.forEach(line => this.game.debug.geom(line, '#FF0000'));
+			this.lines.forEach(line => {
+				this.game.debug.geom(line, '#FF0000');
+				const above = new Phaser.Line(line.start.x, line.start.y + 1, line.end.x, line.end.y + 1);
+				const below = new Phaser.Line(line.start.x, line.start.y - 1, line.end.x, line.end.y - 1);
+				this.game.debug.geom(above, '#FF0000'); 
+				this.game.debug.geom(below, '#FF0000'); 
+			});
 		}
 		
 		update() {
