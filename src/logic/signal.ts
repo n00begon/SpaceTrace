@@ -24,8 +24,8 @@ export class Signal {
     hasReversal: boolean;
 
     constructor(trace: number[], drawWidth: number) {
-        this.amplitudeMultiplier = 500;
-        this.rateMultiplier = 1;
+        this.amplitudeMultiplier = 250;
+        this.rateMultiplier = 0.5;
         this.trace = trace;
         this.tracePointIndex = 0;
         this.drawWidth = drawWidth;
