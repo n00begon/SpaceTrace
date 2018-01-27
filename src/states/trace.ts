@@ -42,8 +42,8 @@ module MyGame {
 				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
 				traceDot.anchor.setTo(0.5, 0.5);
 				this.game.physics.enable(traceDot, Phaser.Physics.ARCADE);
-				traceDot.body.velocity.x = this.signalInfo.getVelociy();
-				traceDot.x = 0 - i * this.signalInfo.getVelociy() / 100;
+				//traceDot.body.velocity.x = 0;
+				traceDot.x = 0 - i * 4;
 				this.traceDots.push(traceDot);
 
 				if ( i > 0) {
@@ -68,28 +68,25 @@ module MyGame {
 		update() {
 			//this.emitter.x = this.traceDots[this.traceDots.length - 1].x;
 			//this.emitter.y = this.traceDots[this.traceDots.length - 1].y;
-			
-			const elapsedTime = this.game.time.elapsed;
-			
-			const drawPoints = this.signalInfo.getNextYPoints(elapsedTime, NUM_DOTS);
-			
-			if (drawPoints.length > 0) {
-				this.traceDots.forEach((traceDot, i) => {
-					traceDot.y = this.game.world.centerY - drawPoints.pop();
-					if (traceDot.x > this.game.world.width) {
-						traceDot.x = 0;
-					}
 
-					if ( i > 0) {
-						const prevDot = this.traceDots[i - 1];
-						const line = new Phaser.Line().fromSprite(traceDot, prevDot, true);
-						//console.log(line.start.x, line.end.x)
-						//this.lines[i - 1] = traceDot.x > prevDot.x ? line : new Phaser.Line();
-						this.lines[i - 1] = prevDot.x === 0 ? new Phaser.Line() : line;
+			const positionFurtherestPoint = this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy();
+
+			const positionStartPoint = positionFurtherestPoint - this.traceDots.length * 4;
+			this.traceDots.forEach((traceDot, i) => {
+				const absX = positionStartPoint + i * 4;
+				traceDot.x = (absX) % this.game.world.width;
+				traceDot.y = this.game.world.centerY - this.signalInfo.getYForPoint( absX);
+
+				if ( i > 0) {
+					const prevDot = this.traceDots[i - 1];
+
+					if (prevDot.x > traceDot.x) {
+						return;
 					}
-	
-				});
-			}
+					const line = new Phaser.Line().fromSprite(traceDot, prevDot, true);
+					this.lines[i - 1] = line;
+				}
+			});
 		}
 
 		createEmitter() {
