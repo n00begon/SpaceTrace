@@ -80,5 +80,18 @@ export class Signal {
         return resultPoints;
     }
 
+    getPreviousYPoints(num: number): number[] {
+        let index = this.tracePointIndex;
+        const resultPoints = [];
+        for (let i = 0; i < num; i++) {
+            const traceIndex = index % this.trace.length;
+            resultPoints.push(this.trace[index % this.trace.length] * this.amplitudeMultiplier);
+            index--;
+            if (index < 0)
+                index = this.trace.length - 1;
+        }
+        return resultPoints;
+    }
+
 }
 }
