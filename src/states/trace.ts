@@ -2,10 +2,12 @@ module MyGame {
 
 	const MAX_HEIGHT = 500;
 	const MIN_HEIGHT = 100;
+	const NUM_DOTS = 200;
 
 	export class TraceState extends Phaser.State {
 		
-        traceDot: Phaser.Sprite
+		traceDots: Phaser.Sprite[];
+		lines: Phaser.Line[] = [];
 		emitter: Phaser.Particles.Arcade.Emitter;
 		bitmapData: Phaser.BitmapData;
 		dotIndex: number = 0;
@@ -27,18 +29,14 @@ module MyGame {
 		}
 
 		create() {
-			this.traceDot = this.game.add.sprite(0, this.game.world.centerY, 'traceDot');
-			this.traceDot.anchor.setTo(0.5, 0.5);
-			this.game.physics.enable(this.traceDot, Phaser.Physics.ARCADE);
+			this.traceDots = [];
 			this.transmission = Transmission.None;
-			this.createEmitter();
+			//this.createEmitter();
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-
+			
 			this.signalInfo = new Signal(TraceA, this.game.width);
-			this.traceDot.body.velocity.x = this.signalInfo.getVelociy();
-
 			const playerPos = this.gameState.player.position;
 
 			for (let i = 0; i <= playerPos.x; i++) {
@@ -48,22 +46,58 @@ module MyGame {
 			for (let i = 4; i >= playerPos.y; i--) {
 				this.signalInfo.increaseAmplitude();
 			}
+
+			for (let i = 0; i < NUM_DOTS; i++) {
+				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
+				traceDot.anchor.setTo(0.5, 0.5);
+				this.game.physics.enable(traceDot, Phaser.Physics.ARCADE);
+				traceDot.body.velocity.x = this.signalInfo.getVelociy();
+				traceDot.x = 0 - i * this.signalInfo.getVelociy() / 100;
+				this.traceDots.push(traceDot);
+
+				if ( i > 0) {
+					const prevDot = this.traceDots[i - 1];
+					//const line = new Phaser.Line(traceDot.x, traceDot.y, prevDot.x, prevDot.y);
+					const line = new Phaser.Line().fromSprite(traceDot, prevDot, true);
+					this.lines.push(line);
+				}
+			}
+		}
+
+		render() {
+			this.lines.forEach(line => {
+				this.game.debug.geom(line, '#FF0000');
+				const above = new Phaser.Line(line.start.x, line.start.y + 1, line.end.x, line.end.y + 1);
+				const below = new Phaser.Line(line.start.x, line.start.y - 1, line.end.x, line.end.y - 1);
+				this.game.debug.geom(above, '#FF0000'); 
+				this.game.debug.geom(below, '#FF0000'); 
+			});
 		}
 		
 		update() {
-			this.emitter.x = this.traceDot.x;
-			this.emitter.y = this.traceDot.y;
+			//this.emitter.x = this.traceDots[this.traceDots.length - 1].x;
+			//this.emitter.y = this.traceDots[this.traceDots.length - 1].y;
 			
 			const elapsedTime = this.game.time.elapsed;
 			
-			const drawPoints = this.signalInfo.getNextYPoints(elapsedTime);
+			const drawPoints = this.signalInfo.getNextYPoints(elapsedTime, NUM_DOTS);
 			
 			if (drawPoints.length > 0) {
-				this.traceDot.y = this.game.world.centerY - drawPoints.pop();
-			}
-			
-			if (this.traceDot.x > this.game.world.width) {
-				this.traceDot.x = 0;
+				this.traceDots.forEach((traceDot, i) => {
+					traceDot.y = this.game.world.centerY - drawPoints.pop();
+					if (traceDot.x > this.game.world.width) {
+						traceDot.x = 0;
+					}
+
+					if ( i > 0) {
+						const prevDot = this.traceDots[i - 1];
+						const line = new Phaser.Line().fromSprite(traceDot, prevDot, true);
+						//console.log(line.start.x, line.end.x)
+						//this.lines[i - 1] = traceDot.x > prevDot.x ? line : new Phaser.Line();
+						this.lines[i - 1] = prevDot.x === 0 ? new Phaser.Line() : line;
+					}
+	
+				});
 			}
 
 
@@ -77,13 +111,13 @@ module MyGame {
 
 		createEmitter() {
 			this.emitter = this.game.add.emitter(this.game.world.centerX, this.game.world.centerY, 500);
-			this.emitter.setAlpha(1, 0, 2500);
+			this.emitter.setAlpha(1, 0, 1000);
 
-			this.bitmapData = this.game.add.bitmapData(5, 5);
+			this.bitmapData = this.game.add.bitmapData(1, 1);
 			this.bitmapData.fill(255, 0, 0, 1);
 
 			this.emitter.makeParticles(this.bitmapData);
-			this.emitter.start(false,3000,0);
+			this.emitter.start(false,1000,0);
 			this.emitter.on = true;
 			this.emitter.maxParticleSpeed = new Phaser.Point(0,0);
 			this.emitter.minRotation = 0;
@@ -142,6 +176,9 @@ module MyGame {
 				default:
 					break;
 			}
+
+			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
+		
 
 			this.transmitClick(); //debug only
 
