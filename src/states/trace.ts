@@ -18,13 +18,7 @@ module MyGame {
 		upButton: Phaser.Button;
 		downButton: Phaser.Button;
 
-		triangleButton: Phaser.Button;
-		circleButton: Phaser.Button;
-		crossButton: Phaser.Button;
-		squareButton: Phaser.Button;
-
 		defibrillateButton: Phaser.Button;
-		transmitButton: Phaser.Button;
 
 		transmission: Transmission;
 
@@ -34,6 +28,9 @@ module MyGame {
 		gameGrid: Phaser.Sprite[][];
 
 		lastDistanceDrawn: number;
+		signalStrength: number;
+		consoleActive: boolean;
+		style;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -105,7 +102,8 @@ module MyGame {
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-			
+			this.signalStrength = 5;
+			this.consoleActive = true;
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			const playerPos = this.gameState.player.position;
 
@@ -132,7 +130,12 @@ module MyGame {
 					this.lines.push(line);
 				}
 			}
-			//this.createFilter();
+
+			//this.addText("Patient Deceased", "#ff0044");
+			//this.addText("Patient Stable", "#00ff44");
+			//this.addText("Signal Lost", "#aaaaff");
+
+
 		}
 
 		render() {
@@ -180,15 +183,6 @@ module MyGame {
 				}
 			});
 
-
-			if (this.gameState.player.state === 'dead') {
-				this.signalInfo.flatline();	
-				let endLogo = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'deceasedLogo');
-
-				endLogo.alpha = 0;
-				this.game.add.tween(endLogo).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
-			} 
-
 			this.filter.update();
 		}
 
@@ -212,37 +206,25 @@ module MyGame {
 
 		createButtons() {
 			const offset = 50;
-			const moveButtonX = this.game.world.left + offset + 20;
+			const moveButtonX = this.game.world.width/2;
 			const moveButtonY = this.game.world.height - offset - 50 - 20;
 			this.leftButton = this.game.add.button(moveButtonX - offset, moveButtonY, 'button', this.leftClick, this, 1, 2, 3);
 			this.rightButton = this.game.add.button(moveButtonX + offset, moveButtonY, 'button', this.rightClick, this, 1, 2, 3);
 			this.upButton = this.game.add.button(moveButtonX, moveButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
 			this.downButton = this.game.add.button(moveButtonX, moveButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
 
-			const drugButtonX = moveButtonX + 200;
-			const drugButtonY = moveButtonY;
-			const drugOffset = 25;
-
-			this.triangleButton = this.game.add.button(drugButtonX - drugOffset, drugButtonY - drugOffset, 'triangleButton', this.triangleClick, this, 1, 2, 3);
-			this.circleButton = this.game.add.button(drugButtonX - drugOffset, drugButtonY  + drugOffset, 'circleButton', this.circleClick, this, 1, 2, 3);
-			this.crossButton = this.game.add.button(drugButtonX + drugOffset, drugButtonY - drugOffset, 'crossButton', this.crossClick, this, 1, 2, 3);
-			this.squareButton = this.game.add.button(drugButtonX + drugOffset, drugButtonY + drugOffset, 'squareButton', this.squareClick, this, 1, 2, 3);
 
 			this.defibrillateButton = this.game.add.button(this.game.world.width - 300, moveButtonY, 'defibrillateButton', this.defibrillateClick, this, 1, 2, 3);
-
-			this.transmitButton = this.game.add.button(this.game.world.width - 200, moveButtonY, 'transmitButton', this.transmitClick, this, 1, 1, 1);
 		}
 
 		click(transmission: Transmission) {
+			if(!this.consoleActive) {
+				return;
+			}
 			this.leftButton.setFrames(1, 2, 3);
 			this.rightButton.setFrames(1, 2, 3);
 			this.upButton.setFrames(1, 2, 3);
 			this.downButton.setFrames(1, 2, 3);
-
-			this.triangleButton.setFrames(1, 2, 3);
-			this.circleButton.setFrames(1, 2, 3);
-			this.crossButton.setFrames(1, 2, 3);
-			this.squareButton.setFrames(1, 2, 3);
 
 			this.defibrillateButton.setFrames(1, 2, 3);
 
@@ -250,15 +232,6 @@ module MyGame {
 				this.transmission = Transmission.None;
 			} else {
 				this.transmission = transmission;
-			}
-
-			let activeButton = this.getActiveButton();
-
-			if(activeButton) {
-				activeButton.setFrames(0, 0, 0);
-				this.transmitButton.setFrames(0, 0, 0);
-			} else {
-				this.transmitButton.setFrames(1, 1, 1);
 			}
 
 			//Change this to update based on the player state?
@@ -297,14 +270,6 @@ module MyGame {
 					return this.upButton;
 				case 'Down':
 					return this.downButton;
-				case 'Triangle':
-					return this.triangleButton;
-				case 'Circle':
-					return this.circleButton;
-				case 'Cross':
-					return this.crossButton;
-				case 'Square':
-					return this.squareButton;
 				case 'Defibrillate':
 					return this.defibrillateButton;
 				default:
@@ -355,6 +320,7 @@ module MyGame {
 				console.log(this.gameState);
 				this.click(Transmission.None);
 				this.redrawState();
+				this.checkStatus();
 			}
 		}
 
@@ -368,6 +334,31 @@ module MyGame {
 				}
 			}
 			this.redrawState();
+		}
+
+		checkStatus() {
+			if (this.gameState.player.state === 'dead') {
+				this.signalInfo.flatline();	
+				this.addText("Patient Deceased", "#ff0044");
+				this.consoleActive = false;
+			} else if (this.gameState.player.state === 'stable') {
+				this.addText("Patient Stable", "#00ff44");
+				this.consoleActive = false;
+			} else if (this.signalStrength <= 0) {
+				this.addText("Signal Lost", "#aaaaff");
+				this.consoleActive = false;
+			}
+		}
+
+
+		addText(input: string, color: string) {
+			this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
+			let text = this.game.add.text(0, 0, input, this.style);
+			text.anchor.set(0.5);
+			text.x = this.game.width/2
+			text.y = this.game.height/2;
+			text.alpha = 0;
+			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
 
         createFilter() {

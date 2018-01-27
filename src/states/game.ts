@@ -11,7 +11,7 @@ module MyGame {
 
 		update() {
 			if (this.game.input.activePointer.isDown){
-				this.game.state.start('Trace');
+				this.game.state.start('Instructions');
 			}
 		}
 
