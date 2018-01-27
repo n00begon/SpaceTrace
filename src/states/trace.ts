@@ -125,6 +125,9 @@ module MyGame {
 					break;
 			}
 
+			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
+		
+
 			this.transmitClick(); //debug only
 
 		}
