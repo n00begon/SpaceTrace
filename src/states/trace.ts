@@ -4,7 +4,7 @@ module MyGame {
 	const MIN_HEIGHT = 100;
 
 	export class TraceState extends Phaser.State {
-
+		
         traceDot: Phaser.Sprite
 		emitter: Phaser.Particles.Arcade.Emitter;
 		bitmapData: Phaser.BitmapData;
@@ -14,9 +14,13 @@ module MyGame {
 		upButton: Phaser.Button;
 		downButton: Phaser.Button;
 
+		transmitButton: Phaser.Button;
+		transmission: Transmission;
+
 		gameState: SpaceTraceState;
 
 		signalInfo: Signal;
+		gameGrid: Phaser.Sprite[][];
 
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -26,10 +30,11 @@ module MyGame {
 			this.traceDot = this.game.add.sprite(0, this.game.world.centerY, 'traceDot');
 			this.traceDot.anchor.setTo(0.5, 0.5);
 			this.game.physics.enable(this.traceDot, Phaser.Physics.ARCADE);
-
+			this.transmission = Transmission.None;
 			this.createEmitter();
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
+			this.createGameGrid();
 
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			this.traceDot.body.velocity.x = this.signalInfo.getVelociy();
@@ -72,33 +77,97 @@ module MyGame {
 			const offset = 50;
 			const centerButtonX = this.game.world.left + offset + 20;
 			const centerButtonY = this.game.world.height - offset - 50 - 20;
-			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 0, 2);
-			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 0, 2);
-			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 0, 2);
-			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 0, 2);
+			this.leftButton = this.game.add.button(centerButtonX - offset, centerButtonY, 'button', this.leftClick, this, 1, 2, 3);
+			this.rightButton = this.game.add.button(centerButtonX + offset, centerButtonY, 'button', this.rightClick, this, 1, 2, 3);
+			this.upButton = this.game.add.button(centerButtonX, centerButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
+			this.downButton = this.game.add.button(centerButtonX, centerButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
+
+			this.transmitButton = this.game.add.button(this.game.world.width - 200, centerButtonY, 'transmitButton', this.transmitClick, this, 1, 1, 1);
+		}
+
+		click(transmission: Transmission) {
+			this.leftButton.setFrames(1, 2, 3);
+			this.rightButton.setFrames(1, 2, 3);
+			this.upButton.setFrames(1, 2, 3);
+			this.downButton.setFrames(1, 2, 3);
+
+			if(transmission === this.transmission) {
+				this.transmission = Transmission.None;
+			} else {
+				this.transmission = transmission;
+			}
+
+			let activeButton = this.getActiveButton();
+
+			if(activeButton) {
+				activeButton.setFrames(0, 0, 0);
+				this.transmitButton.setFrames(0, 0, 0);
+			} else {
+				this.transmitButton.setFrames(1, 1, 1);
+			}
 
 		}
 
+		getActiveButton(): Phaser.Button {
+			switch (this.transmission) {
+				case 'Left':
+					return this.leftButton;
+				case 'Right':
+					return this.rightButton;
+				case 'Up':
+					return this.upButton;
+				case 'Down':
+					return this.downButton;
+				default:
+					return undefined;
+				}
+			}
+
 		leftClick() {
-			this.gameState.move('left');
-			console.log("Left Click", this.gameState);
+			this.click(Transmission.Left);
 		}
 
 		rightClick() {
-			this.gameState.move('right');			
-			console.log("Right Click", this.gameState);
+			this.click(Transmission.Right);
 		}
 
 		upClick() {
-			this.gameState.move('up');						
-			console.log("Up Click", this.gameState);
+			this.click(Transmission.Up);
 		}
 
 		downClick() {
-			this.gameState.move('down');						
-			console.log("Down Click", this.gameState);
+			this.click(Transmission.Down);
 		}
 
-	}
+		transmitClick() {
+			if(this.transmission !== Transmission.None) {
+				console.log("Transmitting ", this.transmission);
+				this.gameState.move(this.transmission);
+				console.log(this.gameState);
+				this.click(Transmission.None);
+			}
+		}
 
+		createGameGrid() {
+			const offset = 20;
+			this.gameGrid = [];
+			for(let x = 0; x < this.gameState.space.length; ++x) {
+				this.gameGrid.push([]);
+				for (let y = 0; y < this.gameState.space[0].length; ++y) {
+					this.gameGrid[x][y] = this.game.add.sprite(x * offset, y * offset, 'grid');
+				}
+			}
+		}
+
+		drawGameState() {
+			const offset = 20;
+			const gridX = this.game.world.width - 40;
+			const gridY = this.game.world.top - 40;
+			for(let x = 0; x < this.gameState.space.length; ++x) {
+				for (let y = 0; y < this.gameState.space[0].length; ++y) {
+
+				}
+			}
+		}
+	}
 }

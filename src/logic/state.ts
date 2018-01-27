@@ -10,7 +10,6 @@ function pickDisease(): Disease {
     return pickOne(diseases);
 }
 
-type Movement = 'left' | 'right' | 'up' | 'down';
 interface Pos {
     x: number;
     y: number;
@@ -54,18 +53,18 @@ class Player {
         };
     }
 
-    move(movement: Movement) {
+    move(movement: Transmission) {
         switch (movement) {
-            case 'left':
+            case 'Left':
                 this.position.x--;
                 break;
-            case 'right':
+            case 'Right':
                 this.position.x++;
                 break;
-            case 'up':
+            case 'Up':
                 this.position.y--;
                 break;
-            case 'down':
+            case 'Down':
                 this.position.y++;
                 break;
         }
@@ -119,7 +118,7 @@ export class SpaceTraceState {
     // this handles applying 'normal' drugs, like to raiser/lower frequency
     // the Movement type is not correct (it is literal in respect to the grid we are moving in)
     // not sure what to call this
-    move(movement: Movement) {
+    move(movement: Transmission) {
         this.player.move(movement);
 
         if (this.player.state === 'defibrillate') {
