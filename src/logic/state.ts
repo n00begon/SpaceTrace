@@ -26,7 +26,7 @@ class SpaceNode {
 const MAX_SPACE_SIZE = 5; // space is 5 x 5
 const SPACE_CENTER = Math.ceil(MAX_SPACE_SIZE / 2);
 
-const STARTING_HEALTH = 5;
+const STARTING_HEALTH = 3;
 
 type PlayerState = 'active' | 'defibrillate' | 'stable' | 'dead';
 
@@ -53,19 +53,36 @@ class Player {
         };
     }
 
+
     move(movement: Transmission) {
         switch (movement) {
             case 'Left':
-                this.position.x--;
+                if(this.position.x === 0) {
+                    this.state = 'defibrillate';
+                } else {
+                    this.position.x--;
+                }
                 break;
             case 'Right':
-                this.position.x++;
+                if(this.position.x === MAX_SPACE_SIZE -1) {
+                    this.state = 'defibrillate';
+                } else {
+                    this.position.x++;
+                }                
                 break;
             case 'Up':
-                this.position.y--;
+                if(this.position.y === 0) {
+                    this.state = 'defibrillate';
+                } else {
+                    this.position.y--;
+                }                
                 break;
             case 'Down':
-                this.position.y++;
+                if(this.position.y === MAX_SPACE_SIZE -1) {
+                    this.state = 'defibrillate';
+                } else {
+                    this.position.y++;
+                }                       
                 break;
         }
     }
@@ -115,26 +132,31 @@ export class SpaceTraceState {
             this.player.hurt(); // otherwise hurt the player
     }
 
-    // this handles applying 'normal' drugs, like to raiser/lower frequency
-    // the Movement type is not correct (it is literal in respect to the grid we are moving in)
-    // not sure what to call this
-    move(movement: Transmission) {
-        this.player.move(movement);
-
-        if (this.player.state === 'defibrillate') {
-            this.player.health--; // the player needed to defibrillate, hurt them!
+    receiveTransmission(transmission: Transmission) {
+        if (this.player.state === 'dead') {
+            return;
         }
 
-        if (!this.currentPositionIsValid()) // out of bounds, need defibrilliation!
-            this.player.state = 'defibrillate';
+        if (this.player.state === 'stable') {
+            return;
+        }
 
+        if (this.player.state === 'defibrillate') {
+            this.player.hurt(); // the player needed to defibrillate, hurt them!
+            return;
+        } 
+        this.player.move(transmission);
+
+        if (this.isStable()) {
+            this.player.state = 'stable';
+        }
     }
 
     defibrillate() {
         this.player.state = 'active';
     }
 
-    patientIsSaved(): boolean {
+    isStable(): boolean {
         const { x, y } = this.player.position;
         const hasReachedCenter = x === SPACE_CENTER && y === SPACE_CENTER;
         const noDiseases = this.player.diseases.length === 0;

@@ -142,7 +142,7 @@ module MyGame {
 		transmitClick() {
 			if(this.transmission !== Transmission.None) {
 				console.log("Transmitting ", this.transmission);
-				this.gameState.move(this.transmission);
+				this.gameState.receiveTransmission(this.transmission);
 				console.log(this.gameState);
 				this.click(Transmission.None);
 				this.redrawState();
@@ -188,7 +188,20 @@ module MyGame {
 			}
 			let playerPosition = this.gameState.player.position;
 			let playerState = this.gameState.player.state;
-			this.gameGrid[playerPosition.x][playerPosition.y].frame = 1;
+			switch (playerState) {
+				case 'active':
+					this.gameGrid[playerPosition.x][playerPosition.y].frame = 5;
+					break;
+				case 'defibrillate':
+					this.gameGrid[playerPosition.x][playerPosition.y].frame = 6;
+					break;
+				case 'dead':
+					this.gameGrid[playerPosition.x][playerPosition.y].frame = 7;
+					break;
+				case 'stable':
+					this.gameGrid[playerPosition.x][playerPosition.y].frame = 8;
+					break;
+				}
 		}
 	}
 }
