@@ -24,7 +24,7 @@ class SpaceNode {
 }
 
 const MAX_SPACE_SIZE = 5; // space is 5 x 5
-const SPACE_CENTER = Math.ceil(MAX_SPACE_SIZE / 2);
+const SPACE_CENTER = Math.ceil(MAX_SPACE_SIZE / 2) - 1;
 
 const STARTING_HEALTH = 3;
 
