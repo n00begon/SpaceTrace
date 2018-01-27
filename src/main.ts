@@ -39,7 +39,24 @@ module MyGame {
 
 }
 
+var wfconfig = {
+ 
+	active: function() { 
+		init();
+	},
+ 
+	google: {
+		families: ['VT323', 'Ubuntu Mono']
+	}
+ 
+};
+ 
+
+function init() {
+	var game = new MyGame.PhaserGame();
+}
+
 // when the page has finished loading, create our game
 window.onload = () => {
-	var game = new MyGame.PhaserGame();
+	WebFont.load(wfconfig);
 }
