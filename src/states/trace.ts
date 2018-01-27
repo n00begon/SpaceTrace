@@ -48,7 +48,9 @@ module MyGame {
 			
 			const drawPoints = this.signalInfo.getNextYPoints(elapsedTime);
 			
-			this.traceDot.y = this.game.world.centerY - drawPoints.pop();
+			if (drawPoints.length > 0) {
+				this.traceDot.y = this.game.world.centerY - drawPoints.pop();
+			}
 			
 			if (this.traceDot.x > this.game.world.width) {
 				this.traceDot.x = 0;

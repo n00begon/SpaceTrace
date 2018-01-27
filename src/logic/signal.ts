@@ -19,7 +19,7 @@ export class Signal {
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 500;
-        this.rateMultiplier = 3;
+        this.rateMultiplier = 1;
         this.trace = trace;
         this.tracePointIndex = 0;
         this.drawWidth = drawWidth;
@@ -56,6 +56,11 @@ export class Signal {
             this.rateMultiplier -= RATE_INCREASE;
         }
     }
+
+    flatline() {
+        this.amplitudeMultiplier = 0;
+    }
+  
 
     getMillisecondsPerPoint() {
         return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
