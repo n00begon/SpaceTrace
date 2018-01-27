@@ -34,6 +34,8 @@ module MyGame {
 		gameGrid: Phaser.Sprite[][];
 
 		lastDistanceDrawn: number;
+
+		style;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -132,7 +134,12 @@ module MyGame {
 					this.lines.push(line);
 				}
 			}
-			//this.createFilter();
+			
+			//this.addText("Patient Deceased", "#ff0044");
+			//this.addText("Patient Stable", "#00ff44");
+			//this.addText("Signal Lost", "#aaaaff");
+
+
 		}
 
 		render() {
@@ -367,6 +374,14 @@ module MyGame {
 				}
 			}
 			this.redrawState();
+		}
+
+		addText(input: string, color: string) {
+			this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
+			let text = this.game.add.text(0, 0, input, this.style);
+			text.anchor.set(0.5);
+			text.x = this.game.width/2
+			text.y = this.game.height/2;
 		}
 
         createFilter() {
