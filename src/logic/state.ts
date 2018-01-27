@@ -15,7 +15,8 @@ module MyGame {
         y: number;
     }
 
-    const CHANCE_OF_DISEASE = 0.2;
+    //const CHANCE_OF_DISEASE = 0.2;
+    const CHANCE_OF_DISEASE = 0;
     class SpaceNode {
         disease: Disease;
         constructor() {

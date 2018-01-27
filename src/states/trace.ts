@@ -18,13 +18,7 @@ module MyGame {
 		upButton: Phaser.Button;
 		downButton: Phaser.Button;
 
-		triangleButton: Phaser.Button;
-		circleButton: Phaser.Button;
-		crossButton: Phaser.Button;
-		squareButton: Phaser.Button;
-
 		defibrillateButton: Phaser.Button;
-		transmitButton: Phaser.Button;
 
 		transmission: Transmission;
 
@@ -134,7 +128,7 @@ module MyGame {
 					this.lines.push(line);
 				}
 			}
-			
+
 			//this.addText("Patient Deceased", "#ff0044");
 			//this.addText("Patient Stable", "#00ff44");
 			//this.addText("Signal Lost", "#aaaaff");
@@ -219,25 +213,15 @@ module MyGame {
 
 		createButtons() {
 			const offset = 50;
-			const moveButtonX = this.game.world.left + offset + 20;
+			const moveButtonX = this.game.world.width/2;
 			const moveButtonY = this.game.world.height - offset - 50 - 20;
 			this.leftButton = this.game.add.button(moveButtonX - offset, moveButtonY, 'button', this.leftClick, this, 1, 2, 3);
 			this.rightButton = this.game.add.button(moveButtonX + offset, moveButtonY, 'button', this.rightClick, this, 1, 2, 3);
 			this.upButton = this.game.add.button(moveButtonX, moveButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
 			this.downButton = this.game.add.button(moveButtonX, moveButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
 
-			const drugButtonX = moveButtonX + 200;
-			const drugButtonY = moveButtonY;
-			const drugOffset = 25;
-
-			this.triangleButton = this.game.add.button(drugButtonX - drugOffset, drugButtonY - drugOffset, 'triangleButton', this.triangleClick, this, 1, 2, 3);
-			this.circleButton = this.game.add.button(drugButtonX - drugOffset, drugButtonY  + drugOffset, 'circleButton', this.circleClick, this, 1, 2, 3);
-			this.crossButton = this.game.add.button(drugButtonX + drugOffset, drugButtonY - drugOffset, 'crossButton', this.crossClick, this, 1, 2, 3);
-			this.squareButton = this.game.add.button(drugButtonX + drugOffset, drugButtonY + drugOffset, 'squareButton', this.squareClick, this, 1, 2, 3);
 
 			this.defibrillateButton = this.game.add.button(this.game.world.width - 300, moveButtonY, 'defibrillateButton', this.defibrillateClick, this, 1, 2, 3);
-
-			this.transmitButton = this.game.add.button(this.game.world.width - 200, moveButtonY, 'transmitButton', this.transmitClick, this, 1, 1, 1);
 		}
 
 		click(transmission: Transmission) {
@@ -246,26 +230,12 @@ module MyGame {
 			this.upButton.setFrames(1, 2, 3);
 			this.downButton.setFrames(1, 2, 3);
 
-			this.triangleButton.setFrames(1, 2, 3);
-			this.circleButton.setFrames(1, 2, 3);
-			this.crossButton.setFrames(1, 2, 3);
-			this.squareButton.setFrames(1, 2, 3);
-
 			this.defibrillateButton.setFrames(1, 2, 3);
 
 			if(transmission === this.transmission) {
 				this.transmission = Transmission.None;
 			} else {
 				this.transmission = transmission;
-			}
-
-			let activeButton = this.getActiveButton();
-
-			if(activeButton) {
-				activeButton.setFrames(0, 0, 0);
-				this.transmitButton.setFrames(0, 0, 0);
-			} else {
-				this.transmitButton.setFrames(1, 1, 1);
 			}
 
 			//Change this to update based on the player state?
@@ -303,14 +273,6 @@ module MyGame {
 					return this.upButton;
 				case 'Down':
 					return this.downButton;
-				case 'Triangle':
-					return this.triangleButton;
-				case 'Circle':
-					return this.circleButton;
-				case 'Cross':
-					return this.crossButton;
-				case 'Square':
-					return this.squareButton;
 				case 'Defibrillate':
 					return this.defibrillateButton;
 				default:
