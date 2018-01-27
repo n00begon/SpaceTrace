@@ -24,7 +24,7 @@ module MyGame {
     }
 
     const MAX_SPACE_SIZE = 5; // space is 5 x 5
-    const SPACE_CENTER = Math.ceil(MAX_SPACE_SIZE / 2) - 1;
+    const SPACE_CENTER = 2;
 
     const STARTING_HEALTH = 3;
 
@@ -160,8 +160,11 @@ module MyGame {
 
             if (this.isDrug(transmission)) {
                 this.applyDrug(transmission);
+                if (this.isStable()) {
+                    this.player.state = 'stable';
+                }
                 return;
-                
+
             }
 
             this.player.move(transmission);
@@ -180,6 +183,7 @@ module MyGame {
         }
 
         defibrillate() {
+            this.player.hurt(); //OUCH!
             this.player.state = 'active';
         }
 
