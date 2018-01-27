@@ -5,8 +5,7 @@ module MyGame {
 		
 		constructor()
 		{
-			super(1000
-				, 600, Phaser.AUTO, 'content', null);
+			super(1000, 600, Phaser.AUTO, 'content', null);
 
 			this.state.add('Boot', BootState);
 			this.state.add('Preloader', PreloaderState);

@@ -97,6 +97,8 @@ module MyGame {
 		}
 
 		create() {
+			let background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
+			background.anchor.setTo(0.5, 0.5);
 			this.traceDots = [];
 			this.transmission = Transmission.None;
 			//this.createEmitter();
