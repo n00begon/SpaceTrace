@@ -150,7 +150,7 @@ module MyGame {
                     this.player.state = 'active';
                     return;
                 }
-                this.player.hurt(); // the player needed to defibrillate, hurt them!
+                this.player.state = 'dead'; // nice job, idiot!
                 return;
             }
 
@@ -159,53 +159,16 @@ module MyGame {
                 return;
             }
 
-            if (this.isDrug(transmission)) {
-                this.applyDrug(transmission);
-                if (this.isStable()) {
-                    this.player.state = 'stable';
-                }
-                return;
-
-            }
-
             this.player.move(transmission);
-
-            if (this.getCurrentSpaceContainDisease() !== 'none') {
-                this.player.giveDisease(this.getCurrentSpaceContainDisease())
-            }
 
             if (this.isStable()) {
                 this.player.state = 'stable';
             }
         }
 
-        isDrug(transmission: Transmission): boolean {
-            return transmission === 'Triangle' || transmission === 'Circle' || transmission === 'Cross' || transmission === 'Square';
-        }
-
         defibrillate() {
             this.player.hurt(); //OUCH!
             this.player.state = 'active';
-        }
-
-        applyDrug(transmission: Transmission) {
-            let disease: Disease;
-            switch (transmission) {
-                case 'Triangle':
-                    disease = 'triangle';
-                case 'Circle':
-                    disease = 'circle';
-                case 'Cross':
-                    disease = 'cross';
-                case 'Square':
-                    disease = 'square';
-            }
-
-            if (this.player.hasDisease(disease)) {
-                this.player.cure(disease);
-            } else {
-                this.player.fibrillate();
-            }
         }
 
         isStable(): boolean {

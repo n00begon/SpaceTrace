@@ -30,10 +30,12 @@ module MyGame {
 		lastDistanceDrawn: number;
 		signalStrength: number;
 		consoleActive: boolean;
+		clickToGoBackToTitleScreen: boolean;
 		style;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
+			this.game.load.image('black', 'assets/black.png');
 			var fragmentSrc = [
 				"precision mediump float;",
 				// Incoming texture coordinates. 
@@ -104,16 +106,12 @@ module MyGame {
 			this.createGameGrid();
 			this.signalStrength = 5;
 			this.consoleActive = true;
+			this.clickToGoBackToTitleScreen = false;
 			this.signalInfo = new Signal(TraceA, this.game.width);
 			const playerPos = this.gameState.player.position;
 
-			for (let i = 0; i <= playerPos.x; i++) {
-				this.signalInfo.increaseRate();
-			}
+			this.signalInfo.updateStateModifiers(playerPos);
 
-			for (let i = 4; i >= playerPos.y; i--) {
-				this.signalInfo.increaseAmplitude();
-			}
 
 			for (let i = 0; i < NUM_DOTS; i++) {
 				const traceDot = this.game.add.sprite(0, this.game.world.centerY);
@@ -151,6 +149,11 @@ module MyGame {
 		update() {
 			//this.emitter.x = this.traceDots[this.traceDots.length - 1].x;
 			//this.emitter.y = this.traceDots[this.traceDots.length - 1].y;
+
+			if (this.game.input.activePointer.isDown && this.clickToGoBackToTitleScreen) {
+				this.game.state.clearCurrentState();
+				this.game.state.start('Game');
+			}
 
 			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
@@ -205,28 +208,21 @@ module MyGame {
 		}
 
 		createButtons() {
-			const offset = 50;
-			const moveButtonX = this.game.world.width/2;
-			const moveButtonY = this.game.world.height - offset - 50 - 20;
-			this.leftButton = this.game.add.button(moveButtonX - offset, moveButtonY, 'button', this.leftClick, this, 1, 2, 3);
-			this.rightButton = this.game.add.button(moveButtonX + offset, moveButtonY, 'button', this.rightClick, this, 1, 2, 3);
-			this.upButton = this.game.add.button(moveButtonX, moveButtonY - offset, 'button', this.upClick, this, 1, 2, 3);
-			this.downButton = this.game.add.button(moveButtonX, moveButtonY + offset, 'button', this.downClick, this, 1, 2, 3);
-
-
-			this.defibrillateButton = this.game.add.button(this.game.world.width - 300, moveButtonY, 'defibrillateButton', this.defibrillateClick, this, 1, 2, 3);
+			const offset = 20;
+			const size = 170 + offset;
+			const buttonX = this.game.world.width/2 - size/2;
+			const buttonY = this.game.world.height - offset - 50 - 50;
+			this.leftButton = this.game.add.button(buttonX - (2 * size), buttonY, 'button', this.leftClick, this, 0, 2, 1);
+			this.rightButton = this.game.add.button(buttonX - size, buttonY, 'button', this.rightClick, this, 0, 2, 1);
+			this.defibrillateButton = this.game.add.button(buttonX, buttonY, 'button', this.defibrillateClick, this, 0, 2, 1);
+			this.upButton = this.game.add.button(buttonX + size, buttonY, 'button', this.upClick, this, 0, 2, 1);
+			this.downButton = this.game.add.button(buttonX + (2 * size), buttonY, 'button', this.downClick, this, 0, 2, 1);
 		}
 
 		click(transmission: Transmission) {
 			if(!this.consoleActive) {
 				return;
 			}
-			this.leftButton.setFrames(1, 2, 3);
-			this.rightButton.setFrames(1, 2, 3);
-			this.upButton.setFrames(1, 2, 3);
-			this.downButton.setFrames(1, 2, 3);
-
-			this.defibrillateButton.setFrames(1, 2, 3);
 
 			if(transmission === this.transmission) {
 				this.transmission = Transmission.None;
@@ -234,47 +230,15 @@ module MyGame {
 				this.transmission = transmission;
 			}
 
-			//Change this to update based on the player state?
-			switch (this.transmission) {
-				case 'Left':
-					this.signalInfo.decreaseRate();
-					break;
-				case 'Right':
-					this.signalInfo.increaseRate();
-					break;
-				case 'Up':
-					this.signalInfo.increaseAmplitude();
-					break;
-				case 'Down':
-					this.signalInfo.decreaseAmplitude();
-					break;
-				default:
-					break;
-			}
-
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
+			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
-			this.transmitClick(); //debug only
+			this.transmitClick();
 
+			const pos = this.gameState.player.position;
+			this.signalInfo.updateStateModifiers(pos);
 		}
-
-		getActiveButton(): Phaser.Button {
-			switch (this.transmission) {
-				case 'Left':
-					return this.leftButton;
-				case 'Right':
-					return this.rightButton;
-				case 'Up':
-					return this.upButton;
-				case 'Down':
-					return this.downButton;
-				case 'Defibrillate':
-					return this.defibrillateButton;
-				default:
-					return undefined;
-				}
-			}
 
 		leftClick() {
 			this.click(Transmission.Left);
@@ -290,22 +254,6 @@ module MyGame {
 
 		downClick() {
 			this.click(Transmission.Down);
-		}
-
-		triangleClick() {
-			this.click(Transmission.Triangle);
-		}
-
-		circleClick() {
-			this.click(Transmission.Circle);
-		}
-
-		crossClick() {
-			this.click(Transmission.Cross);
-		}
-
-		squareClick() {
-			this.click(Transmission.Square);
 		}
 
 		defibrillateClick() {
@@ -335,15 +283,28 @@ module MyGame {
 			this.redrawState();
 		}
 
+		fadeInBlackEndGameBackground() {
+			const background = this.game.add.sprite(0, 0, 'black');
+			background.alpha = 0;
+			this.game.add.tween(background).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0);
+			setTimeout(() => {
+				// after background has faded in, allow user to click to change state
+				this.clickToGoBackToTitleScreen = true;
+			}, 2000);				
+		}
+
 		checkStatus() {
 			if (this.gameState.player.state === 'dead') {
 				this.signalInfo.flatline();	
+				this.fadeInBlackEndGameBackground();
 				this.addText("Patient Deceased", "#ff0044");
 				this.consoleActive = false;
 			} else if (this.gameState.player.state === 'stable') {
+				this.fadeInBlackEndGameBackground();				
 				this.addText("Patient Stable", "#00ff44");
 				this.consoleActive = false;
 			} else if (this.signalStrength <= 0) {
+				this.fadeInBlackEndGameBackground();				
 				this.addText("Signal Lost", "#aaaaff");
 				this.consoleActive = false;
 			}
@@ -351,7 +312,8 @@ module MyGame {
 
 
 		addText(input: string, color: string) {
-			this.style = { font: "60px VT323", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
+			//this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
+			this.style = { font: "60px VT323", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
 			let text = this.game.add.text(0, 0, input, this.style);
 			text.anchor.set(0.5);
 			text.x = this.game.width/2

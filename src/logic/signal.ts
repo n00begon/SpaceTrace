@@ -22,6 +22,10 @@ export class Signal {
     leftoverElapsedTime: number;
     hasInversion: boolean;
     hasReversal: boolean;
+    defibrillateNeeded: boolean;
+
+    stateAmplitudeIncrease: number;
+    stateRateMultiplier: number;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
@@ -39,6 +43,9 @@ export class Signal {
 
         this.leftoverElapsedTime = 0;
 
+        this.stateAmplitudeIncrease = 0;
+        this.stateRateMultiplier = 1;
+
     }
 
     getCycleCount() {
@@ -46,38 +53,15 @@ export class Signal {
     } 
 
     getVelociy() {
-        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN);
+        // Using rate increase as the diff because the healthy amount per screen happens normally at the
+        // top left of the state grid, while the healthy one should be the middle of it
+        return this.drawWidth/(HEALTHY_BPS * HEALTHY_BEATS_PER_SCREEN) / (RATE_INCREASE * RATE_INCREASE);
     }
 
-    increaseAmplitude() {
-        if (this.amplitudeMultiplier < AMPLITUDE_INCREASE) {
-            this.amplitudeMultiplier = AMPLITUDE_INCREASE;
-        }
-        else {
-            this.amplitudeMultiplier += AMPLITUDE_INCREASE;
-        }
-    }
-
-    decreaseAmplitude() {
-        if (this.amplitudeMultiplier < AMPLITUDE_INCREASE) {
-            this.amplitudeMultiplier = HEALTHY_AMPLITUDE_MULTIPLIER;
-        }
-        else {
-            this.amplitudeMultiplier -= AMPLITUDE_INCREASE;
-        }
-    }
-
-    increaseRate() {
-        this.rateMultiplier *= RATE_INCREASE;
+    updateStateModifiers(pos) {
+        this.stateRateMultiplier = 1 * Math.pow(RATE_INCREASE, pos.x);
+        this.stateAmplitudeIncrease = (4 - pos.y) * AMPLITUDE_INCREASE;
         this.rateChanger = this.getMillisecondsPerPoint();
-
-    }
-
-    decreaseRate() {
-        if (this.rateMultiplier > 0) {
-            this.rateMultiplier /= RATE_INCREASE;
-            this.rateChanger = this.getMillisecondsPerPoint();
-        }
     }
 
     flatline() {
@@ -86,7 +70,7 @@ export class Signal {
   
 
     getMillisecondsPerPoint() {
-        return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
+        return (HEALTHY_MS_PER_SCREEN / this.trace.length) / (this.rateMultiplier * this.stateRateMultiplier); //13.7 at healthy
     }
 
     getArrhythmiaPulseDistVal(): number {
@@ -131,11 +115,17 @@ export class Signal {
     }
 
     getYForPoint(distanceFromStart: number) {
-        let pixelsThroughTrace = distanceFromStart * this.rateMultiplier;
+        if (this.defibrillateNeeded) {
+            return this.trace[Math.floor(Math.random() * this.trace.length)] * HEALTHY_AMPLITUDE_MULTIPLIER;
+        }
+
+        const amplitudeMultiplier = this.amplitudeMultiplier + this.stateAmplitudeIncrease;
+
+        let pixelsThroughTrace = distanceFromStart * this.rateMultiplier * this.stateRateMultiplier;
         while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
        
         const traceIndex = Math.floor(pixelsThroughTrace % this.trace.length);
-        return this.trace[traceIndex] * this.amplitudeMultiplier;
+        return this.trace[traceIndex] * amplitudeMultiplier;
     }
 
     setCurrentDiseases(diseases: Disease[] ) {
@@ -158,6 +148,10 @@ export class Signal {
                     break;
             }  
         })
+    }
+
+    setDefibrillateNeeded(needed: boolean) {
+        this.defibrillateNeeded = needed;
     }
 
 }
