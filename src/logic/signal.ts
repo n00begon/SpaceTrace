@@ -3,6 +3,7 @@ const HEALTHY_BEATS_PER_SCREEN = 2;
 const HEALTHY_BPS = 1.17; // 70 BPM
 const HEALTHY_MS_PER_SCREEN = HEALTHY_BEATS_PER_SCREEN * HEALTHY_BPS * 1000;
 const HEALTHY_MULTIPLIER = 1;
+const HEALTHY_AMPLITUDE_MULTIPLIER = 500;
 const AMPLITUDE_INCREASE = 250;
 const RATE_INCREASE = 0.5;
 
@@ -17,10 +18,11 @@ export class Signal {
     tracePointIndex: number;
 
     constructor(trace: number[], drawWidth: number) {
-        this.amplitudeMultiplier = 1;
-        this.rateMultiplier = 1;
+        this.amplitudeMultiplier = 500;
+        this.rateMultiplier = 3;
         this.trace = trace;
         this.tracePointIndex = 0;
+        this.drawWidth = drawWidth;
     }
 
     getVelociy() {
@@ -38,7 +40,7 @@ export class Signal {
 
     decreaseAmplitude() {
         if (this.amplitudeMultiplier < AMPLITUDE_INCREASE) {
-            this.amplitudeMultiplier = HEALTHY_MULTIPLIER;
+            this.amplitudeMultiplier = HEALTHY_AMPLITUDE_MULTIPLIER;
         }
         else {
             this.amplitudeMultiplier -= AMPLITUDE_INCREASE;
@@ -56,17 +58,18 @@ export class Signal {
     }
 
     getMillisecondsPerPoint() {
-        return (HEALTHY_BEATS_PER_SCREEN / this.trace.length) * this.rateMultiplier; //13.7 at healthy
-
+        return (HEALTHY_MS_PER_SCREEN / this.trace.length) / this.rateMultiplier; //13.7 at healthy
     }
 
     getNextYPoints(elapsedTime: number): number[] {
         const rateChanger = this.getMillisecondsPerPoint();
-        
+        let innerElapsedTime = elapsedTime; 
+
         let resultPoints = [];
 
-        while (elapsedTime > rateChanger) {
-            resultPoints.push(this.trace[this.tracePointIndex % this.trace.length] * this.amplitudeMultiplier);
+        while (innerElapsedTime > rateChanger) {
+            resultPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
+            innerElapsedTime -= rateChanger;
         }
 
         return resultPoints;
