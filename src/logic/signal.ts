@@ -20,6 +20,8 @@ export class Signal {
     rateChanger: number;
     hasArrhythmia: boolean;
     leftoverElapsedTime: number;
+    hasInversion: boolean;
+    hasReversal: boolean;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 500;
@@ -29,7 +31,12 @@ export class Signal {
         this.drawWidth = drawWidth;
         this.prevCycleCount = this.getCycleCount();
         this.rateChanger = this.getMillisecondsPerPoint();
+
+        // diseases
         this.hasArrhythmia = false;
+        this.hasInversion = false;
+        this.hasReversal = false;
+
         this.leftoverElapsedTime = 0;
     }
 
@@ -119,6 +126,28 @@ export class Signal {
                 index = this.trace.length - 1;
         }
         return resultPoints;
+    }
+
+    setCurrentDiseases(diseases: Disease[] ) {
+        this.hasArrhythmia = false;
+        this.hasInversion = false;
+        this.hasReversal = false;
+
+        diseases.forEach(disease => {
+            switch (disease) {
+                case 'triangle':
+                    this.hasArrhythmia = true;
+                    break;
+                case 'circle':
+                    this.hasInversion = true;
+                    break;
+                case 'square':
+                    this.hasReversal = true;
+                    break;
+                default:
+                    break;
+            }  
+        })
     }
 
 }

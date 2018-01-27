@@ -4,7 +4,7 @@ function pickOne(array: any[]) {
     return array[Math.floor(Math.random() * array.length)];
 }
 
-type Disease = 'triangle' | 'square' | 'circle' | 'cross' | 'none';
+export type Disease = 'triangle' | 'square' | 'circle' | 'cross' | 'none';
 function pickDisease(): Disease {
     const diseases: Disease[] = ['triangle', 'square', 'circle', 'cross'];
     return pickOne(diseases);
@@ -94,6 +94,12 @@ class Player {
         }, false);
     }
 
+    giveDisease(disease: Disease) {
+        if (!this.hasDisease(disease)) {
+            this.diseases.push(disease);
+        }
+    }
+
     hurt() {
         this.health--;
         if (this.health <= 0)
@@ -147,6 +153,10 @@ export class SpaceTraceState {
         } 
         this.player.move(transmission);
 
+        if (this.getCurrentSpaceContainDisease() !== 'none') {
+            this.player.giveDisease(this.getCurrentSpaceContainDisease())
+        }
+
         if (this.isStable()) {
             this.player.state = 'stable';
         }
@@ -161,6 +171,11 @@ export class SpaceTraceState {
         const hasReachedCenter = x === SPACE_CENTER && y === SPACE_CENTER;
         const noDiseases = this.player.diseases.length === 0;
         return hasReachedCenter && noDiseases;
+    }
+
+    getCurrentSpaceContainDisease() {
+        const { x, y } = this.player.position;
+        return this.space[x][y].disease;
     }
 
 }
