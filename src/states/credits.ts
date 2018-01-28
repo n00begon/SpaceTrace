@@ -2,27 +2,28 @@ module MyGame {
 
 	export class CreditState extends Phaser.State {
 		content = [
-			"Credits",
+			"D o   N o   H a r m",
 			" ",
 			" ",
-			"Game by Aaron Jackson, Morgan Lieshout, Tim Bennett and Tim Neumegen ",
+			"Developers!, Developers!, Developers!, Developers!",
 			" ",
 			" ",
-			" ",
-			"Music by Tim Bennett",
-			" ",
-			" ",
-			" ",
-			" ",
+			"Tim Bennett",
+			"Aaron Jackson",
+			"Morgan Lieshout",
+			"Tim Neumegen",
 			" ",
 			" ",
-			"Made at #GGJdunedin for Global Gam Jam 2018",
+			"Also, Tim Bennett did some music.",
+			" ",
+			" ",
+			"Made at #GGJDunedin for Global Game Jam 2018, #GGJ18",
 		];
 		preload() {}
 
 		create() {
 			let display = new TextDisplay();
-			display.create(this.content, this.game);
+			display.create(this.content, this.game, 60);
 		}
 
 		update() {

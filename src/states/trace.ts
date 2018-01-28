@@ -262,7 +262,7 @@ module MyGame {
 			this.game.add.tween(background).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0);
 			setTimeout(() => {
 				this.game.state.start('Credits');
-			}, 4000);				
+			}, 5000);				
 		}
 
 		checkStatus() {
