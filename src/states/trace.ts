@@ -86,12 +86,6 @@ module MyGame {
 		}
 		
 		update() {
-
-			if (this.game.input.activePointer.isDown && this.clickToGoBackToTitleScreen) {
-				this.game.state.clearCurrentState();
-				this.game.state.start('Game');
-			}
-
 			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
 			const distanceToDraw = positionFurtherestPoint - this.lastDistanceDrawn;
