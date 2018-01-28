@@ -12,7 +12,7 @@ module MyGame {
 			this.game.load.audio('lost', ['assets/lost.wav']);
 			this.game.load.audio('sad', ['assets/sad.wav']);
 			this.game.load.audio('stable', ['assets/stable.wav']);
-
+			this.game.load.audio('beep', ['assets/beep.m4a']);
 		}
 
 		create() {
