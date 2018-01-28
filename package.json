@@ -1,7 +1,7 @@
 {
-  "name": "phaser-typescript-vscode-boilerplate",
+  "name": "do-no-harm-ggj18",
   "version": "1.0.0",
-  "description": "Project Boilerplate for using Phaser in VS Code.",
+  "description": "Do No Harm, game made for GGJ18",
   "main": "",
   "repository": "",
   "scripts": {
@@ -11,7 +11,8 @@
   "author": "Tim Neumegen <tneumegen@gmail.com>",
   "contributors": [
     "Tim Bennett <bennett.td@gmail.com",
-    "Aaron Jackson <azzamatronic@gmail.com"
+    "Aaron Jackson <azzamatronic@gmail.com",
+    "Morgan Lieshout <cyborgtyrant@gmail.com"
   ],
   "license": "MIT",
   "dependencies": {
