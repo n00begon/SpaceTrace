@@ -12,7 +12,7 @@ module MyGame {
         content;
         game: Phaser.Game;
 
-        create(content: string[], game: Phaser.Game) {
+        create(content: string[], game: Phaser.Game, letterDelay?: number) {
             this.game = game;
             this.content = content;
             this.text = this.game.add.text(32, 32, '', {font: "18px Space Mono", fill: "#19de65" });
@@ -20,6 +20,10 @@ module MyGame {
             this.lineIndex = 0;
             this.letterIndex = 0;
             this.nextLine();
+
+            if (letterDelay) {
+                this.letterDelay = letterDelay;
+            }
         }
         
      nextLine() {

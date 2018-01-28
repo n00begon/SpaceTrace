@@ -37,6 +37,7 @@ module MyGame {
 		clickToGoBackToTitleScreen: boolean;
 
 		beep: Phaser.Sound;
+		lastBeepSoundInSeconds: number;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -100,7 +101,14 @@ module MyGame {
 			this.lastDistanceDrawn = positionFurtherestPoint;
 
 			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
-			if (containsBeep) {
+
+			if (this.signalInfo.defibrillateNeeded && 
+				(!this.lastBeepSoundInSeconds || 
+				this.lastBeepSoundInSeconds + 0.1 < this.game.time.totalElapsedSeconds()) ) {
+					this.beep.play();
+					this.lastBeepSoundInSeconds = this.game.time.totalElapsedSeconds();
+			}
+			else if (containsBeep) {
 				this.beep.play();
 			}
 
@@ -271,7 +279,7 @@ module MyGame {
 			this.game.add.tween(background).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0);
 			setTimeout(() => {
 				this.game.state.start('Credits');
-			}, 4000);				
+			}, 5000);				
 		}
 
 		checkStatus() {

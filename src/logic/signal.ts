@@ -106,6 +106,8 @@ export class Signal {
     }
 
     rangeContainsPeak(startDistance, endDistance) {
+        if (startDistance === -10000) return false;
+
         const startIndex = this.getIndexForPoint(startDistance);
         const endIndex = this.getIndexForPoint(endDistance);
 
