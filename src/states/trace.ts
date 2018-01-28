@@ -33,12 +33,16 @@ module MyGame {
 		signalStrength: number;
 		consoleActive: boolean;
 		clickToGoBackToTitleScreen: boolean;
+
+		beep: Phaser.Sound;
+		lastBeepSoundInSeconds: number;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 			this.game.load.image('black', 'assets/black.png');
+			this.beep = this.game.add.audio('beep');
 		}
-
+		
 		create() {
 			let background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
 			background.anchor.setTo(0.5, 0.5);
@@ -94,7 +98,17 @@ module MyGame {
 			this.lastDistanceDrawn = positionFurtherestPoint;
 
 			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
-			
+
+			if (this.signalInfo.defibrillateNeeded && 
+				(!this.lastBeepSoundInSeconds || 
+				this.lastBeepSoundInSeconds + 0.1 < this.game.time.totalElapsedSeconds()) ) {
+					this.beep.play();
+					this.lastBeepSoundInSeconds = this.game.time.totalElapsedSeconds();
+			}
+			else if (containsBeep) {
+				this.beep.play();
+			}
+
 			const dotsToMove = distanceToDraw / 4;
 
 			let dotsMoved = 0;
