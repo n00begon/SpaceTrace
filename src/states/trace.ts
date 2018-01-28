@@ -4,6 +4,8 @@ module MyGame {
 	const MIN_HEIGHT = 100;
 	const NUM_DOTS = 200;
 
+	const GAME_GREEN = '#00ff2a';
+
 	export class TraceState extends Phaser.State {
 		screen: Phaser.Sprite;
 		filter: Phaser.Filter;
@@ -31,7 +33,6 @@ module MyGame {
 		signalStrength: number;
 		consoleActive: boolean;
 		clickToGoBackToTitleScreen: boolean;
-		style;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -155,11 +156,47 @@ module MyGame {
 			const size = 170 + offset;
 			const buttonX = this.game.world.width/2 - size/2;
 			const buttonY = this.game.world.height - offset - 50 - 50;
-			this.leftButton = this.game.add.button(buttonX - (2 * size), buttonY, 'button', this.leftClick, this, 0, 2, 1);
-			this.rightButton = this.game.add.button(buttonX - size, buttonY, 'button', this.rightClick, this, 0, 2, 1);
-			this.defibrillateButton = this.game.add.button(buttonX, buttonY, 'button', this.defibrillateClick, this, 0, 2, 1);
-			this.upButton = this.game.add.button(buttonX + size, buttonY, 'button', this.upClick, this, 0, 2, 1);
-			this.downButton = this.game.add.button(buttonX + (2 * size), buttonY, 'button', this.downClick, this, 0, 2, 1);
+
+			const buttonCallbacks = [this.leftClick, this.rightClick, this.upClick, this.downClick];
+
+			this.defibrillateButton = this.createButton(buttonX, buttonY, size, this.defibrillateClick, 'Defibrillate');
+			
+			const getNextButton = function() {
+				return buttonCallbacks.splice(buttonCallbacks.length * Math.random() | 0, 1)[0];
+			}
+
+			let drugsCopy = Drugs.slice();
+
+			const getNextDrugText = function() {
+				return drugsCopy.splice(drugsCopy.length * Math.random() | 0, 1)[0];
+			}
+
+			this.leftButton = this.createButton(buttonX - (2 * size), buttonY, size, getNextButton() ,getNextDrugText());
+			this.rightButton = this.createButton(buttonX - size, buttonY, size, getNextButton(), getNextDrugText());
+			this.upButton = this.createButton(buttonX + size, buttonY, size, getNextButton(), getNextDrugText());
+			this.downButton = this.createButton(buttonX + (2 * size), buttonY, size, getNextButton(), getNextDrugText());
+
+		}
+
+		createButton(x: number, y: number, width: number, callback: () => void, buttonText?: string): Phaser.Button {
+			const returnButton = this.game.add.button(x, y, 'button', callback, this, 0, 2, 1);
+
+			returnButton.height
+
+			if (buttonText) {
+				this.addButtonText(buttonText, x + 18, y + 32, width);
+			}
+			return returnButton;
+		}
+
+		addButtonText(input: string, x: number, y: number, width: number) {
+			const style = { font: "18px Space Mono",
+		    fill: GAME_GREEN,
+			align: "center"  
+			};
+
+			const text = this.game.add.text(x, y, input, style);
+			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
 
 		click(transmission: Transmission) {
@@ -258,8 +295,8 @@ module MyGame {
 
 		addText(input: string, color: string) {
 			//this.style = { font: "60px Consolas", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center", backgroundColor: "#000000"  };
-			this.style = { font: "60px Space Mono", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
-			let text = this.game.add.text(0, 0, input, this.style);
+			const style = { font: "60px Space Mono", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
+			let text = this.game.add.text(0, 0, input, style);
 			text.anchor.set(0.5);
 			text.x = this.game.width/2
 			text.y = this.game.height/2;
