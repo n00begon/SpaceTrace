@@ -279,7 +279,7 @@ module MyGame {
 			this.game.add.tween(background).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0);
 			setTimeout(() => {
 				this.game.state.start('Credits');
-			}, 5000);				
+			}, 6000);				
 		}
 
 		checkStatus() {
@@ -314,8 +314,8 @@ module MyGame {
 			const style = { font: "60px Space Mono", fill: color, wordWrap: true, wordWrapWidth: this.game.width, align: "center"  };
 			let text = this.game.add.text(0, 0, input, style);
 			text.anchor.set(0.5);
-			text.x = this.game.width/2
-			text.y = this.game.height/2;
+			text.x = this.game.width/2;
+			text.y = this.game.height/2 + 100;
 			text.alpha = 0;
 			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
