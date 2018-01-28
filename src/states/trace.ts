@@ -290,7 +290,7 @@ module MyGame {
 				music.play();
 				music.loop = true;
 				this.fadeInBlackEndGameBackground();
-				this.addText("Patient Deceased", "#ff0044");
+				this.addText("Patient Deceased", "#aaaaff");
 				this.consoleActive = false;
 			} else if (this.gameState.player.state === 'stable') {
 				let music = this.game.add.audio('stable');
