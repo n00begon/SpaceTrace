@@ -125,7 +125,7 @@ export class Signal {
         while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
        
         const traceIndex = Math.floor(pixelsThroughTrace % this.trace.length);
-        return this.trace[traceIndex] * amplitudeMultiplier;
+        return this.trace[traceIndex] * amplitudeMultiplier * 2;
     }
 
     setCurrentDiseases(diseases: Disease[] ) {

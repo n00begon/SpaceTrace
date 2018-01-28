@@ -8,12 +8,12 @@ module MyGame {
 			"back to the normal range.",
 			" ",
 			" ",
-			"Hurry, we are losing signal with the Space Lab",
+			"Hurry, we are losing signal with the Space Lab!",
 			" ",
 			" ",
 			" ",
 			" ",
-			"Click to activate the console"
+			"Click to activate the console."
 		];
 		preload() {}
 
