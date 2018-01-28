@@ -93,35 +93,37 @@ module MyGame {
 		}
 		
 		update() {
-			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
+			if (this.signalStrength > 0) {
+				const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
-			const distanceToDraw = positionFurtherestPoint - this.lastDistanceDrawn;
-			const prevLastDistanceDrawn = this.lastDistanceDrawn;
+				const distanceToDraw = positionFurtherestPoint - this.lastDistanceDrawn;
+				const prevLastDistanceDrawn = this.lastDistanceDrawn;
 
-			this.lastDistanceDrawn = positionFurtherestPoint;
+				this.lastDistanceDrawn = positionFurtherestPoint;
 
-			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
+				const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
 
-			if (this.signalInfo.defibrillateNeeded && 
-				(!this.lastBeepSoundInSeconds || 
-				this.lastBeepSoundInSeconds + 0.1 < this.game.time.totalElapsedSeconds()) ) {
+				if (this.signalInfo.defibrillateNeeded && 
+					(!this.lastBeepSoundInSeconds || 
+					this.lastBeepSoundInSeconds + 0.1 < this.game.time.totalElapsedSeconds()) ) {
+						this.beep.play();
+						this.lastBeepSoundInSeconds = this.game.time.totalElapsedSeconds();
+				}
+				else if (containsBeep) {
 					this.beep.play();
-					this.lastBeepSoundInSeconds = this.game.time.totalElapsedSeconds();
-			}
-			else if (containsBeep) {
-				this.beep.play();
-			}
+				}
 
-			const dotsToMove = distanceToDraw / 4;
+				const dotsToMove = distanceToDraw / 4;
 
-			let dotsMoved = 0;
-			while(dotsMoved < dotsToMove) {
-				const traceDot = this.traceDots.shift();
-				const absX = prevLastDistanceDrawn + dotsMoved * 4;
-				traceDot.x = (absX) % this.game.world.width;
-				traceDot.y = this.game.world.centerY - this.signalInfo.getYForPoint( absX);
-				this.traceDots.push(traceDot);
-				dotsMoved++;
+				let dotsMoved = 0;
+				while(dotsMoved < dotsToMove) {
+					const traceDot = this.traceDots.shift();
+					const absX = prevLastDistanceDrawn + dotsMoved * 4;
+					traceDot.x = (absX) % this.game.world.width;
+					traceDot.y = this.game.world.centerY - this.signalInfo.getYForPoint( absX);
+					this.traceDots.push(traceDot);
+					dotsMoved++;
+				}
 			}
 
 			this.traceDots.forEach((traceDot, i) => {
@@ -375,7 +377,6 @@ module MyGame {
         }
 
 		redrawState() {
-			console.log(this.signalStrength);
 			if (this.signalStrength > 8) {
 				this.signalIcon.frame = 0;
 			}
