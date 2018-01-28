@@ -86,7 +86,7 @@ export class Signal {
 
         const amplitudeMultiplier = this.amplitudeMultiplier + this.stateAmplitudeIncrease;
        
-        return this.trace[this.getIndexForPoint(distanceFromStart)] * amplitudeMultiplier;
+        return this.trace[this.getIndexForPoint(distanceFromStart)] * amplitudeMultiplier * 2;
     }
 
     getIndexForPoint(distanceFromStart) {
@@ -104,15 +104,13 @@ export class Signal {
         const peaksOfData = [0, 87];
 
         return peaksOfData.some(peakOfData => {
-            if (startIndex < endIndex){
+            if (startIndex <= endIndex){
                 return peakOfData <= endIndex && peakOfData > startIndex;
             }
             else {
                 return peakOfData <= endIndex || peakOfData > startIndex;
             }
         })
-
-       
     }
 
     setCurrentDiseases(diseases: Disease[] ) {

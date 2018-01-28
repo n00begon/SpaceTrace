@@ -44,7 +44,6 @@ module MyGame {
 			background.anchor.setTo(0.5, 0.5);
 			this.traceDots = [];
 			this.transmission = Transmission.None;
-			//this.createEmitter();
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
@@ -73,10 +72,6 @@ module MyGame {
 				}
 			}
 
-			//this.addText("Patient Deceased", "#ff0044");
-			//this.addText("Patient Stable", "#00ff44");
-			//this.addText("Signal Lost", "#aaaaff");
-
 			this.createFilter(false);
 		}
 
@@ -91,8 +86,6 @@ module MyGame {
 		}
 		
 		update() {
-			//this.emitter.x = this.traceDots[this.traceDots.length - 1].x;
-			//this.emitter.y = this.traceDots[this.traceDots.length - 1].y;
 
 			if (this.game.input.activePointer.isDown && this.clickToGoBackToTitleScreen) {
 				this.game.state.clearCurrentState();
@@ -107,8 +100,6 @@ module MyGame {
 			this.lastDistanceDrawn = positionFurtherestPoint;
 
 			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
-
-			if (containsBeep) console.log('Beep!');
 			
 			const dotsToMove = distanceToDraw / 4;
 
@@ -274,22 +265,30 @@ module MyGame {
 			background.alpha = 0;
 			this.game.add.tween(background).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0);
 			setTimeout(() => {
-				// after background has faded in, allow user to click to change state
-				this.clickToGoBackToTitleScreen = true;
-			}, 2000);				
+				this.game.state.start('Credits');
+			}, 4000);				
 		}
 
 		checkStatus() {
 			if (this.gameState.player.state === 'dead') {
 				this.signalInfo.flatline();	
+				let music = this.game.add.audio('sad');
+				music.play();
+				music.loop = true;
 				this.fadeInBlackEndGameBackground();
 				this.addText("Patient Deceased", "#ff0044");
 				this.consoleActive = false;
 			} else if (this.gameState.player.state === 'stable') {
+				let music = this.game.add.audio('stable');
+				music.play();
+				music.loop = true;
 				this.fadeInBlackEndGameBackground();				
 				this.addText("Patient Stable", "#00ff44");
 				this.consoleActive = false;
 			} else if (this.signalStrength <= 0) {
+				let music = this.game.add.audio('lost');
+				music.play();
+				music.loop = true;
 				this.fadeInBlackEndGameBackground();				
 				this.addText("Signal Lost", "#aaaaff");
 				this.consoleActive = false;
