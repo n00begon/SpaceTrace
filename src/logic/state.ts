@@ -37,6 +37,7 @@ module MyGame {
         diseases: Disease[] = []; // these are the diseases the player hasn't fixed, 
         // and is 'carrying' around with them
         health: number = STARTING_HEALTH;
+        numDefibsLeft: number = 3;
 
         constructor() {
             this.reposition();
@@ -147,6 +148,11 @@ module MyGame {
 
             if (transmission === 'Defibrillate') {
                 if (this.player.state === 'defibrillate') {
+                    if (this.player.numDefibsLeft <= 0) {
+                        this.player.state = 'dead';
+                        return;        
+                    }
+                    this.player.numDefibsLeft--;
                     this.player.state = 'active';
                     return;
                 }
