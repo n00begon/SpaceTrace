@@ -376,11 +376,11 @@ module MyGame {
 
 		redrawState() {
 			console.log(this.signalStrength);
-			if (this.signalStrength > 9) {
+			if (this.signalStrength > 8) {
 				this.signalIcon.frame = 0;
 			}
 			else {
-				this.signalIcon.frame = 9 - this.signalStrength;
+				this.signalIcon.frame = 8 - this.signalStrength;
 			}
 			
 
