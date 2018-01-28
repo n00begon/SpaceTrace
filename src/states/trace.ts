@@ -233,9 +233,7 @@ module MyGame {
 
 		transmitClick() {
 			if(this.transmission !== Transmission.None) {
-				console.log("Transmitting ", this.transmission);
 				this.gameState.receiveTransmission(this.transmission);
-				console.log(this.gameState);
 				this.click(Transmission.None);
 				this.redrawState();
 				this.checkStatus();

@@ -67,7 +67,9 @@ export class Signal {
     }
 
     flatline() {
-        this.dead = true;
+        setTimeout(() => {
+            this.dead = true;
+        }, 1000);
     }
   
 
