@@ -13,7 +13,7 @@ module MyGame {
 			" ",
 			" ",
 			" ",
-			"Click to activate the console"
+			"Click to activate the console."
 		];
 		preload() {}
 
