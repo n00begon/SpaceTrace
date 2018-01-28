@@ -8,7 +8,7 @@ module MyGame {
 			"back to the normal range.",
 			" ",
 			" ",
-			"Hurry, we are losing signal with the Space Lab",
+			"Hurry, we are losing signal with the Space Lab!",
 			" ",
 			" ",
 			" ",
