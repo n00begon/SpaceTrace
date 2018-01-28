@@ -47,7 +47,7 @@ module MyGame {
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-			this.signalStrength = 5;
+			this.signalStrength = 12;
 			this.consoleActive = true;
 			this.clickToGoBackToTitleScreen = false;
 			this.signalInfo = new Signal(TraceA, this.game.width);
@@ -206,6 +206,10 @@ module MyGame {
 			this.signalInfo.setCurrentDiseases(this.gameState.player.diseases);
 			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
+
+			if(this.transmission != Transmission.Defibrillate) {
+				this.signalStrength--;
+			}
 
 			this.transmitClick();
 
