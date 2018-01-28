@@ -186,10 +186,4 @@ module MyGame {
     }
 
     const state = new SpaceTraceState();
-    console.log(state);
-    // const test = new Player();
-    // console.log(test.position)
-    // test.move('left');
-    // console.log(test.position)
-
 }
