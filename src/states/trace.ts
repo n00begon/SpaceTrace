@@ -56,44 +56,8 @@ module MyGame {
 				"}"
 			];
 		
-			// var fragmentSrc = [
+			this.createFilter(false);
 
-			// 	"precision mediump float;",
-		
-			// 	"uniform float     time;",
-			// 	"uniform vec2      resolution;",
-			// 	"uniform vec2      mouse;",
-		
-			// 	"float noise(vec2 pos) {",
-			// 		"return fract(sin(dot(pos, vec2(12.9898 - time,78.233 + time))) * 43758.5453);",
-			// 	"}",
-		
-			// 	"void main( void ) {",
-		
-			// 		"vec2 normalPos = gl_FragCoord.xy / resolution.xy;",
-			// 		"float pos = (gl_FragCoord.y / resolution.y);",
-			// 		"float distortion = clamp(1.0 - (0.1) * 3.0, 0.0, 1.0);",
-		
-			// 		"pos -= (distortion * distortion) * 0.1;",
-		
-			// 		"float c = sin(pos * 400.0) * 0.4 + 0.4;",
-			// 		"c = pow(c, 0.2);",
-			// 		"c *= 0.2;",
-		
-			// 		"float band_pos = fract(time * 0.1) * 3.0 - 1.0;",
-			// 		"c += clamp( (1.0 - abs(band_pos - pos) * 10.0), 0.0, 1.0) * 0.1;",
-		
-			// 		"c += distortion * 0.08;",
-			// 		"// noise",
-			// 		"c += (noise(gl_FragCoord.xy) - 0.5) * (0.09);",
-		
-		
-			// 		"gl_FragColor = vec4( 0.0, c, 0.0, 1.0 );",
-			// 	"}"
-			//];
-			
-			this.filter = new Phaser.Filter(this.game, null, fragmentSrc);
-			this.game.world.filters = [this.filter];
 		}
 
 		create() {
@@ -275,6 +239,8 @@ module MyGame {
 
 			const pos = this.gameState.player.position;
 			this.signalInfo.updateStateModifiers(pos);
+
+			this.createFilter(this.gameState.player.state === 'defibrillate');
 		}
 
 		leftClick() {
@@ -359,18 +325,21 @@ module MyGame {
 			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
 
-        createFilter() {
-            this.filter = new Phaser.Filter(this.game, null, fragmentSrc);
-            this.filter.setResolution(800, 600);
-            //  From http://glslsandbox.com/e#18578.0
-        
+        createFilter(panic: boolean) {
+            
+		
+			const timeForLine = panic ? '10.0': '0.1';
             var fragmentSrc = [
         
                 "precision mediump float;",
         
                 "uniform float     time;",
                 "uniform vec2      resolution;",
-                "uniform vec2      mouse;",
+				"uniform vec2      mouse;",
+
+				'uniform sampler2D uSampler;',
+				// Incoming texture coordinates. 
+				'varying vec2 vTextureCoord;',
         
                 "float noise(vec2 pos) {",
                     "return fract(sin(dot(pos, vec2(12.9898 - time,78.233 + time))) * 43758.5453);",
@@ -381,7 +350,7 @@ module MyGame {
                     "vec2 normalPos = gl_FragCoord.xy / resolution.xy;",
                     "float pos = (gl_FragCoord.y / resolution.y);",
                     "float mouse_dist = length(vec2((mouse.x - normalPos.x) * (resolution.x / resolution.y) , mouse.y - normalPos.y));",
-                    "float distortion = clamp(1.0 - (mouse_dist + 0.1) * 3.0, 0.0, 1.0);",
+					"float distortion = clamp(1.0 - (mouse_dist + 0.1) * 3.0, 0.0, 1.0);",
         
                     "pos -= (distortion * distortion) * 0.1;",
         
@@ -389,22 +358,22 @@ module MyGame {
                     "c = pow(c, 0.2);",
                     "c *= 0.2;",
         
-                    "float band_pos = fract(time * 0.1) * 3.0 - 1.0;",
+					"float band_pos = fract(time * " + timeForLine + " ) * 3.0 - 1.0;",
                     "c += clamp( (1.0 - abs(band_pos - pos) * 10.0), 0.0, 1.0) * 0.1;",
         
                     "c += distortion * 0.08;",
                     "// noise",
                     "c += (noise(gl_FragCoord.xy) - 0.5) * (0.09);",
         
-        
-                    "gl_FragColor = vec4( 0.0, c, 0.0, 1.0 );",
+					"gl_FragColor = vec4( 0.0, c * 4.0, 0.0, 0.0 ) * texture2D(uSampler, vTextureCoord);",
                 "}"
-            ];
-            this.screen = this.game.add.sprite();
-            this.screen.width = 800;
-            this.screen.height = 600;
-        
-            this.screen.filters = [ this.filter ];
+			];
+			
+			this.filter = new Phaser.Filter(this.game, null, fragmentSrc);
+            this.filter.setResolution(800, 600);
+			//  From http://glslsandbox.com/e#18578.0
+			
+			this.game.world.filters = [this.filter];
         }
 
 		redrawState() {
