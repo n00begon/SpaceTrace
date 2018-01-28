@@ -35,6 +35,7 @@ module MyGame {
 		clickToGoBackToTitleScreen: boolean;
 
 		beep: Phaser.Sound;
+		lastBeepSoundInSeconds: number;
 		
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
@@ -97,7 +98,14 @@ module MyGame {
 			this.lastDistanceDrawn = positionFurtherestPoint;
 
 			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
-			if (containsBeep) {
+
+			if (this.signalInfo.defibrillateNeeded && 
+				(!this.lastBeepSoundInSeconds || 
+				this.lastBeepSoundInSeconds + 0.1 < this.game.time.totalElapsedSeconds()) ) {
+					this.beep.play();
+					this.lastBeepSoundInSeconds = this.game.time.totalElapsedSeconds();
+			}
+			else if (containsBeep) {
 				this.beep.play();
 			}
 
