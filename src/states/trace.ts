@@ -37,27 +37,6 @@ module MyGame {
 		preload() {
 			this.game.load.image('traceDot', 'assets/dot.png');
 			this.game.load.image('black', 'assets/black.png');
-			var fragmentSrc = [
-				"precision mediump float;",
-				// Incoming texture coordinates. 
-				'varying vec2 vTextureCoord;',
-				// Incoming vertex color
-				'varying vec4 vColor;',
-				// Sampler for a) sprite image or b) rendertarget in case of game.world.filter
-				'uniform sampler2D uSampler;',
-		
-				"uniform vec2      resolution;",
-				"uniform float     time;",
-				"uniform vec2      mouse;",
-		
-				"void main( void ) {",
-				// colorRGBA = (y % 2) * texel(u,v);
-				"gl_FragColor = mod(gl_FragCoord.y,2.0) * texture2D(uSampler, vTextureCoord);",
-				"}"
-			];
-		
-			this.createFilter(false);
-
 		}
 
 		create() {
@@ -98,7 +77,7 @@ module MyGame {
 			//this.addText("Patient Stable", "#00ff44");
 			//this.addText("Signal Lost", "#aaaaff");
 
-
+			this.createFilter(false);
 		}
 
 		render() {
@@ -326,9 +305,12 @@ module MyGame {
 		}
 
         createFilter(panic: boolean) {
+
+			const position = this.gameState.player.position;
+			const distanceFromMiddle = Math.abs(position.x - 2) + Math.abs(position.y - 2);
             
 		
-			const timeForLine = panic ? '10.0': '0.1';
+			const timeForLine = panic ? '10.0': (0.1 + 0.3 * distanceFromMiddle).toFixed(1);
             var fragmentSrc = [
         
                 "precision mediump float;",
