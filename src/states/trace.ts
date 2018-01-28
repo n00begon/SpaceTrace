@@ -29,7 +29,7 @@ module MyGame {
 		signalInfo: Signal;
 		gameGrid: Phaser.Sprite[][];
 
-		lastDistanceDrawn: number;
+		lastDistanceDrawn: number = -10000;
 		signalStrength: number;
 		consoleActive: boolean;
 		clickToGoBackToTitleScreen: boolean;
@@ -50,7 +50,7 @@ module MyGame {
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
 			this.createGameGrid();
-			this.signalStrength = 5;
+			this.signalStrength = 12;
 			this.consoleActive = true;
 			this.clickToGoBackToTitleScreen = false;
 			this.signalInfo = new Signal(TraceA, this.game.width);
@@ -89,12 +89,6 @@ module MyGame {
 		}
 		
 		update() {
-
-			if (this.game.input.activePointer.isDown && this.clickToGoBackToTitleScreen) {
-				this.game.state.clearCurrentState();
-				this.game.state.start('Game');
-			}
-
 			const positionFurtherestPoint = Math.floor(this.game.time.totalElapsedSeconds() * this.signalInfo.getVelociy() / 4) * 4;
 
 			const distanceToDraw = positionFurtherestPoint - this.lastDistanceDrawn;
@@ -215,6 +209,10 @@ module MyGame {
 			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
+			if(this.transmission != Transmission.Defibrillate) {
+				this.signalStrength--;
+			}
+
 			this.transmitClick();
 
 			const pos = this.gameState.player.position;
@@ -245,9 +243,7 @@ module MyGame {
 
 		transmitClick() {
 			if(this.transmission !== Transmission.None) {
-				console.log("Transmitting ", this.transmission);
 				this.gameState.receiveTransmission(this.transmission);
-				console.log(this.gameState);
 				this.click(Transmission.None);
 				this.redrawState();
 				this.checkStatus();

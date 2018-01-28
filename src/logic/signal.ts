@@ -26,6 +26,7 @@ export class Signal {
 
     stateAmplitudeIncrease: number;
     stateRateMultiplier: number;
+    dead: boolean;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
@@ -35,6 +36,7 @@ export class Signal {
         this.drawWidth = drawWidth;
         this.prevCycleCount = this.getCycleCount();
         this.rateChanger = this.getMillisecondsPerPoint();
+        this.dead = false;
 
         // diseases
         this.hasArrhythmia = false;
@@ -65,7 +67,9 @@ export class Signal {
     }
 
     flatline() {
-        this.amplitudeMultiplier = 0;
+        setTimeout(() => {
+            this.dead = true;
+        }, 1000);
     }
   
 
@@ -80,6 +84,10 @@ export class Signal {
     }
 
     getYForPoint(distanceFromStart: number) {
+        if (this.dead) {
+            return 0;
+        }
+
         if (this.defibrillateNeeded) {
             return this.trace[Math.floor(Math.random() * this.trace.length)] * HEALTHY_AMPLITUDE_MULTIPLIER;
         }
