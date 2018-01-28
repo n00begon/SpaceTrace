@@ -27,7 +27,7 @@ module MyGame {
 		gameState: SpaceTraceState;
 
 		signalInfo: Signal;
-		gameGrid: Phaser.Sprite[][];
+		// gameGrid: Phaser.Sprite[][];
 
 		signalIcon: Phaser.Sprite;
 
@@ -53,7 +53,6 @@ module MyGame {
 			this.transmission = Transmission.None;
 			this.createButtons();
 			this.gameState = new SpaceTraceState();
-			this.createGameGrid();
 			this.signalStrength = 12;
 			this.consoleActive = true;
 			this.clickToGoBackToTitleScreen = false;
@@ -261,17 +260,17 @@ module MyGame {
 			}
 		}
 
-		createGameGrid() {
-			const offset = 20;
-			this.gameGrid = [];
-			for(let x = 0; x < this.gameState.space.length; ++x) {
-				this.gameGrid.push([]);
-				for (let y = 0; y < this.gameState.space[0].length; ++y) {
-					this.gameGrid[x][y] = this.game.add.sprite(x * offset, y * offset, 'grid');
-				}
-			}
-			this.redrawState();
-		}
+		// createGameGrid() {
+		// 	const offset = 20;
+		// 	this.gameGrid = [];
+		// 	for(let x = 0; x < this.gameState.space.length; ++x) {
+		// 		this.gameGrid.push([]);
+		// 		for (let y = 0; y < this.gameState.space[0].length; ++y) {
+		// 			this.gameGrid[x][y] = this.game.add.sprite(x * offset, y * offset, 'grid');
+		// 		}
+		// 	}
+		// 	this.redrawState();
+		// }
 
 		fadeInBlackEndGameBackground() {
 			const background = this.game.add.sprite(0, 0, 'black');
@@ -384,46 +383,46 @@ module MyGame {
 			}
 			
 
-			for(let x = 0; x < this.gameState.space.length; ++x) {
-				for (let y = 0; y < this.gameState.space[x].length; ++y) {
-					let disease = this.gameState.space[x][y].disease;
-					switch (disease) {
-						case 'none':
-							this.gameGrid[x][y].frame = 0;
-							break;
-						case 'square':
-							this.gameGrid[x][y].frame = 1;
-							break;
-						case 'triangle':
-							this.gameGrid[x][y].frame = 2;
-							break;
-						case 'circle':
-							this.gameGrid[x][y].frame = 3;
-							break;
-						case 'cross':
-							this.gameGrid[x][y].frame = 4;
-							break;
-						default:
-							return undefined;
-						}
-				}
-			}
-			let playerPosition = this.gameState.player.position;
-			let playerState = this.gameState.player.state;
-			switch (playerState) {
-				case 'active':
-					this.gameGrid[playerPosition.x][playerPosition.y].frame = 5;
-					break;
-				case 'defibrillate':
-					this.gameGrid[playerPosition.x][playerPosition.y].frame = 6;
-					break;
-				case 'dead':
-					this.gameGrid[playerPosition.x][playerPosition.y].frame = 7;
-					break;
-				case 'stable':
-					this.gameGrid[playerPosition.x][playerPosition.y].frame = 8;
-					break;
-				}
+		// 	for(let x = 0; x < this.gameState.space.length; ++x) {
+		// 		for (let y = 0; y < this.gameState.space[x].length; ++y) {
+		// 			let disease = this.gameState.space[x][y].disease;
+		// 			switch (disease) {
+		// 				case 'none':
+		// 					this.gameGrid[x][y].frame = 0;
+		// 					break;
+		// 				case 'square':
+		// 					this.gameGrid[x][y].frame = 1;
+		// 					break;
+		// 				case 'triangle':
+		// 					this.gameGrid[x][y].frame = 2;
+		// 					break;
+		// 				case 'circle':
+		// 					this.gameGrid[x][y].frame = 3;
+		// 					break;
+		// 				case 'cross':
+		// 					this.gameGrid[x][y].frame = 4;
+		// 					break;
+		// 				default:
+		// 					return undefined;
+		// 				}
+		// 		}
+		// 	}
+		// 	let playerPosition = this.gameState.player.position;
+		// 	let playerState = this.gameState.player.state;
+		// 	switch (playerState) {
+		// 		case 'active':
+		// 			this.gameGrid[playerPosition.x][playerPosition.y].frame = 5;
+		// 			break;
+		// 		case 'defibrillate':
+		// 			this.gameGrid[playerPosition.x][playerPosition.y].frame = 6;
+		// 			break;
+		// 		case 'dead':
+		// 			this.gameGrid[playerPosition.x][playerPosition.y].frame = 7;
+		// 			break;
+		// 		case 'stable':
+		// 			this.gameGrid[playerPosition.x][playerPosition.y].frame = 8;
+		// 			break;
+		// 		}
 		}
 	}
 
