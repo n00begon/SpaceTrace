@@ -48,7 +48,7 @@ module MyGame {
 		create() {
 			let background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
 			background.anchor.setTo(0.5, 0.5);
-			this.signalIcon = this.game.add.sprite(400, 400, 'signalStrength');
+			this.signalIcon = this.game.add.sprite(930, 0, 'signalStrength');
 			this.traceDots = [];
 			this.transmission = Transmission.None;
 			this.createButtons();
@@ -220,7 +220,7 @@ module MyGame {
 			this.signalInfo.setDefibrillateNeeded(this.gameState.player.state === 'defibrillate');
 		
 
-			if(this.transmission != Transmission.Defibrillate) {
+			if(this.transmission != Transmission.Defibrillate && this.transmission != Transmission.None) {
 				this.signalStrength--;
 			}
 
@@ -375,6 +375,15 @@ module MyGame {
         }
 
 		redrawState() {
+			console.log(this.signalStrength);
+			if (this.signalStrength > 9) {
+				this.signalIcon.frame = 0;
+			}
+			else {
+				this.signalIcon.frame = 9 - this.signalStrength;
+			}
+			
+
 			for(let x = 0; x < this.gameState.space.length; ++x) {
 				for (let y = 0; y < this.gameState.space[x].length; ++y) {
 					let disease = this.gameState.space[x][y].disease;
