@@ -29,7 +29,7 @@ module MyGame {
 		signalInfo: Signal;
 		gameGrid: Phaser.Sprite[][];
 
-		lastDistanceDrawn: number;
+		lastDistanceDrawn: number = -10000;
 		signalStrength: number;
 		consoleActive: boolean;
 		clickToGoBackToTitleScreen: boolean;
