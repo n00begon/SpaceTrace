@@ -27,7 +27,6 @@ module MyGame {
 		
 				this.game.state.clearCurrentState();
 				this.game.state.start('Trace');
-
 			}
 		}
 
