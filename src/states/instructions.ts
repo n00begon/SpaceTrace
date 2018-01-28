@@ -3,7 +3,7 @@ module MyGame {
 	export class InstructionsState extends Phaser.State {
 
 		content = [
-			"Doctor! Astronaut John Dorian is unconcious in Space Lab 5.",
+			"Doctor! Astronaut John Dorian is unconscious in Space Lab 5.",
 			"Use the console to remotely administer drugs to get his heart rate",
 			"back to the normal range.",
 			" ",
