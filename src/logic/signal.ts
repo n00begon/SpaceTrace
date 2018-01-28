@@ -26,6 +26,7 @@ export class Signal {
 
     stateAmplitudeIncrease: number;
     stateRateMultiplier: number;
+    dead: boolean;
 
     constructor(trace: number[], drawWidth: number) {
         this.amplitudeMultiplier = 250;
@@ -35,6 +36,7 @@ export class Signal {
         this.drawWidth = drawWidth;
         this.prevCycleCount = this.getCycleCount();
         this.rateChanger = this.getMillisecondsPerPoint();
+        this.dead = false;
 
         // diseases
         this.hasArrhythmia = false;
@@ -65,7 +67,7 @@ export class Signal {
     }
 
     flatline() {
-        this.amplitudeMultiplier = 0;
+        this.dead = true;
     }
   
 
@@ -79,53 +81,42 @@ export class Signal {
         return upper ? 1 - baseVal: baseVal;
     }
 
-    getNextYPoints(elapsedTime: number, numPrevPoints: number): number[] {
-        let innerElapsedTime = elapsedTime + this.leftoverElapsedTime; 
-
-        let resultPoints = [];
- 
-        while (innerElapsedTime > this.rateChanger) {
-            resultPoints.push(this.trace[this.tracePointIndex++ % this.trace.length] * this.amplitudeMultiplier);
-            innerElapsedTime -= this.rateChanger;
-
-            let newCycleCount = this.getCycleCount();
-            if (newCycleCount > this.prevCycleCount && this.hasArrhythmia) {
-                this.rateChanger = this.getMillisecondsPerPoint() * (this.getArrhythmiaPulseDistVal());
-                this.prevCycleCount = newCycleCount;
-            }
-        }
-
-        this.leftoverElapsedTime = innerElapsedTime;
-
-        //return resultPoints;
-        return this.getPreviousYPoints(this.tracePointIndex - resultPoints.length, numPrevPoints - resultPoints.length).concat(resultPoints);
-    }
-
-    getPreviousYPoints(initialIndex: number, num: number): number[] {
-        let index = initialIndex - 1;
-        const resultPoints = [];
-        for (let i = 0; i < num; i++) {
-            const traceIndex = index % this.trace.length;
-            resultPoints.unshift(this.trace[traceIndex] * this.amplitudeMultiplier);
-            index--;
-            if (index < 0)
-                index = this.trace.length - 1;
-        }
-        return resultPoints;
-    }
-
     getYForPoint(distanceFromStart: number) {
+        if (this.dead) {
+            return 0;
+        }
+
         if (this.defibrillateNeeded) {
             return this.trace[Math.floor(Math.random() * this.trace.length)] * HEALTHY_AMPLITUDE_MULTIPLIER;
         }
 
         const amplitudeMultiplier = this.amplitudeMultiplier + this.stateAmplitudeIncrease;
+       
+        return this.trace[this.getIndexForPoint(distanceFromStart)] * amplitudeMultiplier * 2;
+    }
 
+    getIndexForPoint(distanceFromStart) {
         let pixelsThroughTrace = distanceFromStart * this.rateMultiplier * this.stateRateMultiplier;
         while(pixelsThroughTrace < 0) pixelsThroughTrace += this.trace.length;
        
         const traceIndex = Math.floor(pixelsThroughTrace % this.trace.length);
-        return this.trace[traceIndex] * amplitudeMultiplier * 2;
+        return traceIndex;
+    }
+
+    rangeContainsPeak(startDistance, endDistance) {
+        const startIndex = this.getIndexForPoint(startDistance);
+        const endIndex = this.getIndexForPoint(endDistance);
+
+        const peaksOfData = [0, 87];
+
+        return peaksOfData.some(peakOfData => {
+            if (startIndex <= endIndex){
+                return peakOfData <= endIndex && peakOfData > startIndex;
+            }
+            else {
+                return peakOfData <= endIndex || peakOfData > startIndex;
+            }
+        })
     }
 
     setCurrentDiseases(diseases: Disease[] ) {
