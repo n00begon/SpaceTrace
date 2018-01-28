@@ -29,6 +29,8 @@ module MyGame {
 		signalInfo: Signal;
 		gameGrid: Phaser.Sprite[][];
 
+		signalIcon: Phaser.Sprite;
+
 		lastDistanceDrawn: number = -10000;
 		signalStrength: number;
 		consoleActive: boolean;
@@ -45,6 +47,7 @@ module MyGame {
 		create() {
 			let background = this.game.add.sprite(this.game.world.centerX, this.game.world.centerY, 'background');
 			background.anchor.setTo(0.5, 0.5);
+			this.signalIcon = this.game.add.sprite(400, 400, 'signalStrength');
 			this.traceDots = [];
 			this.transmission = Transmission.None;
 			this.createButtons();
