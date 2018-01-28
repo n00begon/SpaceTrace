@@ -93,6 +93,8 @@ module MyGame {
 
 			this.lastDistanceDrawn = positionFurtherestPoint;
 
+			const containsBeep = this.signalInfo.rangeContainsPeak(prevLastDistanceDrawn, this.lastDistanceDrawn);
+			
 			const dotsToMove = distanceToDraw / 4;
 
 			let dotsMoved = 0;
