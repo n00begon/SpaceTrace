@@ -55,7 +55,7 @@ module MyGame {
 				"}"
 			];
 		
-			this.createFilter();
+			this.createFilter(false);
 
 		}
 
@@ -202,6 +202,8 @@ module MyGame {
 
 			const pos = this.gameState.player.position;
 			this.signalInfo.updateStateModifiers(pos);
+
+			this.createFilter(this.gameState.player.state === 'defibrillate');
 		}
 
 		leftClick() {
@@ -286,9 +288,10 @@ module MyGame {
 			this.game.add.tween(text).to( { alpha: 1 }, 2000, Phaser.Easing.Linear.None, true, 0, 1000, true);
 		}
 
-        createFilter() {
+        createFilter(panic: boolean) {
             
-        
+		
+			const timeForLine = panic ? '10.0': '0.1';
             var fragmentSrc = [
         
                 "precision mediump float;",
@@ -310,7 +313,7 @@ module MyGame {
                     "vec2 normalPos = gl_FragCoord.xy / resolution.xy;",
                     "float pos = (gl_FragCoord.y / resolution.y);",
                     "float mouse_dist = length(vec2((mouse.x - normalPos.x) * (resolution.x / resolution.y) , mouse.y - normalPos.y));",
-                    "float distortion = clamp(1.0 - (mouse_dist + 0.1) * 3.0, 0.0, 1.0);",
+					"float distortion = clamp(1.0 - (mouse_dist + 0.1) * 3.0, 0.0, 1.0);",
         
                     "pos -= (distortion * distortion) * 0.1;",
         
@@ -318,7 +321,7 @@ module MyGame {
                     "c = pow(c, 0.2);",
                     "c *= 0.2;",
         
-                    "float band_pos = fract(time * 0.1) * 3.0 - 1.0;",
+					"float band_pos = fract(time * " + timeForLine + " ) * 3.0 - 1.0;",
                     "c += clamp( (1.0 - abs(band_pos - pos) * 10.0), 0.0, 1.0) * 0.1;",
         
                     "c += distortion * 0.08;",
